@@ -1,5 +1,4 @@
 export default {
-    '*': ['prettier --write'],
-    '*.{ts,tsx}': ['eslint --fix'],
+    '*.{ts,tsx}': ['eslint --fix', 'prettier --write'],
     '**/*.ts?(x)': () => 'tsc --noEmit',
 };

@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/my-calendar/')({
+export const Route = createFileRoute('/resources/')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    return <div>Hello "/my-calendar/"!</div>;
+    return <div>Hello "/resources/"!</div>;
 }
