@@ -6,6 +6,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 import { Route as rootRouteImport } from './routes/__root';
 import { Route as EventEventIdIndexRouteImport } from './routes/event/$eventId/index';
+import { Route as EventEventIdPaymentConfirmIndexRouteImport } from './routes/event/$eventId/payment/confirm/index';
+import { Route as EventEventIdPaymentIndexRouteImport } from './routes/event/$eventId/payment/index';
 import { Route as IndexRouteImport } from './routes/index';
 import { Route as MyWalletIndexRouteImport } from './routes/my-wallet/index';
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index';
@@ -30,18 +32,34 @@ const EventEventIdIndexRoute = EventEventIdIndexRouteImport.update({
     path: '/event/$eventId/',
     getParentRoute: () => rootRouteImport,
 } as any);
+const EventEventIdPaymentIndexRoute =
+    EventEventIdPaymentIndexRouteImport.update({
+        id: '/event/$eventId/payment/',
+        path: '/event/$eventId/payment/',
+        getParentRoute: () => rootRouteImport,
+    } as any);
+const EventEventIdPaymentConfirmIndexRoute =
+    EventEventIdPaymentConfirmIndexRouteImport.update({
+        id: '/event/$eventId/payment/confirm/',
+        path: '/event/$eventId/payment/confirm/',
+        getParentRoute: () => rootRouteImport,
+    } as any);
 
 export interface FileRoutesByFullPath {
     '/': typeof IndexRoute;
     '/my-wallet': typeof MyWalletIndexRoute;
     '/resources': typeof ResourcesIndexRoute;
     '/event/$eventId': typeof EventEventIdIndexRoute;
+    '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute;
+    '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute;
 }
 export interface FileRoutesByTo {
     '/': typeof IndexRoute;
     '/my-wallet': typeof MyWalletIndexRoute;
     '/resources': typeof ResourcesIndexRoute;
     '/event/$eventId': typeof EventEventIdIndexRoute;
+    '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute;
+    '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute;
 }
 export interface FileRoutesById {
     __root__: typeof rootRouteImport;
@@ -49,13 +67,34 @@ export interface FileRoutesById {
     '/my-wallet/': typeof MyWalletIndexRoute;
     '/resources/': typeof ResourcesIndexRoute;
     '/event/$eventId/': typeof EventEventIdIndexRoute;
+    '/event/$eventId/payment/': typeof EventEventIdPaymentIndexRoute;
+    '/event/$eventId/payment/confirm/': typeof EventEventIdPaymentConfirmIndexRoute;
 }
 export interface FileRouteTypes {
     fileRoutesByFullPath: FileRoutesByFullPath;
-    fullPaths: '/' | '/my-wallet' | '/resources' | '/event/$eventId';
+    fullPaths:
+        | '/'
+        | '/my-wallet'
+        | '/resources'
+        | '/event/$eventId'
+        | '/event/$eventId/payment'
+        | '/event/$eventId/payment/confirm';
     fileRoutesByTo: FileRoutesByTo;
-    to: '/' | '/my-wallet' | '/resources' | '/event/$eventId';
-    id: '__root__' | '/' | '/my-wallet/' | '/resources/' | '/event/$eventId/';
+    to:
+        | '/'
+        | '/my-wallet'
+        | '/resources'
+        | '/event/$eventId'
+        | '/event/$eventId/payment'
+        | '/event/$eventId/payment/confirm';
+    id:
+        | '__root__'
+        | '/'
+        | '/my-wallet/'
+        | '/resources/'
+        | '/event/$eventId/'
+        | '/event/$eventId/payment/'
+        | '/event/$eventId/payment/confirm/';
     fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -63,6 +102,8 @@ export interface RootRouteChildren {
     MyWalletIndexRoute: typeof MyWalletIndexRoute;
     ResourcesIndexRoute: typeof ResourcesIndexRoute;
     EventEventIdIndexRoute: typeof EventEventIdIndexRoute;
+    EventEventIdPaymentIndexRoute: typeof EventEventIdPaymentIndexRoute;
+    EventEventIdPaymentConfirmIndexRoute: typeof EventEventIdPaymentConfirmIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -95,6 +136,20 @@ declare module '@tanstack/react-router' {
             preLoaderRoute: typeof EventEventIdIndexRouteImport;
             parentRoute: typeof rootRouteImport;
         };
+        '/event/$eventId/payment/': {
+            id: '/event/$eventId/payment/';
+            path: '/event/$eventId/payment';
+            fullPath: '/event/$eventId/payment';
+            preLoaderRoute: typeof EventEventIdPaymentIndexRouteImport;
+            parentRoute: typeof rootRouteImport;
+        };
+        '/event/$eventId/payment/confirm/': {
+            id: '/event/$eventId/payment/confirm/';
+            path: '/event/$eventId/payment/confirm';
+            fullPath: '/event/$eventId/payment/confirm';
+            preLoaderRoute: typeof EventEventIdPaymentConfirmIndexRouteImport;
+            parentRoute: typeof rootRouteImport;
+        };
     }
 }
 
@@ -103,6 +158,8 @@ const rootRouteChildren: RootRouteChildren = {
     MyWalletIndexRoute: MyWalletIndexRoute,
     ResourcesIndexRoute: ResourcesIndexRoute,
     EventEventIdIndexRoute: EventEventIdIndexRoute,
+    EventEventIdPaymentIndexRoute: EventEventIdPaymentIndexRoute,
+    EventEventIdPaymentConfirmIndexRoute: EventEventIdPaymentConfirmIndexRoute,
 };
 export const routeTree = rootRouteImport
     ._addFileChildren(rootRouteChildren)
