@@ -5,44 +5,64 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 import { Route as rootRouteImport } from './routes/__root';
+import { Route as EventEventIdIndexRouteImport } from './routes/event/$eventId/index';
 import { Route as IndexRouteImport } from './routes/index';
-import { Route as MyCalendarIndexRouteImport } from './routes/my-calendar/index';
+import { Route as MyWalletIndexRouteImport } from './routes/my-wallet/index';
+import { Route as ResourcesIndexRouteImport } from './routes/resources/index';
 
 const IndexRoute = IndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => rootRouteImport,
 } as any);
-const MyCalendarIndexRoute = MyCalendarIndexRouteImport.update({
-    id: '/my-calendar/',
-    path: '/my-calendar/',
+const ResourcesIndexRoute = ResourcesIndexRouteImport.update({
+    id: '/resources/',
+    path: '/resources/',
+    getParentRoute: () => rootRouteImport,
+} as any);
+const MyWalletIndexRoute = MyWalletIndexRouteImport.update({
+    id: '/my-wallet/',
+    path: '/my-wallet/',
+    getParentRoute: () => rootRouteImport,
+} as any);
+const EventEventIdIndexRoute = EventEventIdIndexRouteImport.update({
+    id: '/event/$eventId/',
+    path: '/event/$eventId/',
     getParentRoute: () => rootRouteImport,
 } as any);
 
 export interface FileRoutesByFullPath {
     '/': typeof IndexRoute;
-    '/my-calendar': typeof MyCalendarIndexRoute;
+    '/my-wallet': typeof MyWalletIndexRoute;
+    '/resources': typeof ResourcesIndexRoute;
+    '/event/$eventId': typeof EventEventIdIndexRoute;
 }
 export interface FileRoutesByTo {
     '/': typeof IndexRoute;
-    '/my-calendar': typeof MyCalendarIndexRoute;
+    '/my-wallet': typeof MyWalletIndexRoute;
+    '/resources': typeof ResourcesIndexRoute;
+    '/event/$eventId': typeof EventEventIdIndexRoute;
 }
 export interface FileRoutesById {
     __root__: typeof rootRouteImport;
     '/': typeof IndexRoute;
-    '/my-calendar/': typeof MyCalendarIndexRoute;
+    '/my-wallet/': typeof MyWalletIndexRoute;
+    '/resources/': typeof ResourcesIndexRoute;
+    '/event/$eventId/': typeof EventEventIdIndexRoute;
 }
 export interface FileRouteTypes {
     fileRoutesByFullPath: FileRoutesByFullPath;
-    fullPaths: '/' | '/my-calendar';
+    fullPaths: '/' | '/my-wallet' | '/resources' | '/event/$eventId';
     fileRoutesByTo: FileRoutesByTo;
-    to: '/' | '/my-calendar';
-    id: '__root__' | '/' | '/my-calendar/';
+    to: '/' | '/my-wallet' | '/resources' | '/event/$eventId';
+    id: '__root__' | '/' | '/my-wallet/' | '/resources/' | '/event/$eventId/';
     fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
     IndexRoute: typeof IndexRoute;
-    MyCalendarIndexRoute: typeof MyCalendarIndexRoute;
+    MyWalletIndexRoute: typeof MyWalletIndexRoute;
+    ResourcesIndexRoute: typeof ResourcesIndexRoute;
+    EventEventIdIndexRoute: typeof EventEventIdIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -54,11 +74,25 @@ declare module '@tanstack/react-router' {
             preLoaderRoute: typeof IndexRouteImport;
             parentRoute: typeof rootRouteImport;
         };
-        '/my-calendar/': {
-            id: '/my-calendar/';
-            path: '/my-calendar';
-            fullPath: '/my-calendar';
-            preLoaderRoute: typeof MyCalendarIndexRouteImport;
+        '/resources/': {
+            id: '/resources/';
+            path: '/resources';
+            fullPath: '/resources';
+            preLoaderRoute: typeof ResourcesIndexRouteImport;
+            parentRoute: typeof rootRouteImport;
+        };
+        '/my-wallet/': {
+            id: '/my-wallet/';
+            path: '/my-wallet';
+            fullPath: '/my-wallet';
+            preLoaderRoute: typeof MyWalletIndexRouteImport;
+            parentRoute: typeof rootRouteImport;
+        };
+        '/event/$eventId/': {
+            id: '/event/$eventId/';
+            path: '/event/$eventId';
+            fullPath: '/event/$eventId';
+            preLoaderRoute: typeof EventEventIdIndexRouteImport;
             parentRoute: typeof rootRouteImport;
         };
     }
@@ -66,7 +100,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
     IndexRoute: IndexRoute,
-    MyCalendarIndexRoute: MyCalendarIndexRoute,
+    MyWalletIndexRoute: MyWalletIndexRoute,
+    ResourcesIndexRoute: ResourcesIndexRoute,
+    EventEventIdIndexRoute: EventEventIdIndexRoute,
 };
 export const routeTree = rootRouteImport
     ._addFileChildren(rootRouteChildren)

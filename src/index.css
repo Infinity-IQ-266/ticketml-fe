@@ -5,11 +5,13 @@
 @theme {
     --color-*: initial;
     --color-primary: #e2c6ff;
+    --color-primary-darken: #c6aedf;
     --color-secondary: #bbebff;
     --color-black: #3c4247;
     --color-gray: rgba(60, 66, 71, 0.7);
     --color-gray-light: #d9d9d9;
     --color-white: #ffffff;
+    --color-red: #ff5959;
 
     --font-sans:
         'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
@@ -27,10 +29,6 @@
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
     --color-accent: var(--accent);
@@ -91,6 +89,38 @@
 
 @layer base {
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-black;
+    }
+}
+
+@layer utilities {
+    @keyframes dropdown {
+        0% {
+            opacity: 0;
+            transform: translateY(-10px) scaleY(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scaleY(1);
+        }
+    }
+
+    @keyframes dropdown-reverse {
+        0% {
+            opacity: 1;
+            transform: translateY(0) scaleY(1);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-10px) scaleY(0.95);
+        }
+    }
+
+    .animate-dropdown {
+        animation: dropdown 0.25s ease-out forwards;
+    }
+
+    .animate-dropdown-reverse {
+        animation: dropdown-reverse 0.2s ease-in forwards;
     }
 }
