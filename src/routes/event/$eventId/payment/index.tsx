@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Calendar, Clock, CreditCard, MapPin } from 'lucide-react';
 
-export const Route = createFileRoute('/my-wallet/')({
+export const Route = createFileRoute('/event/$eventId/payment/')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
     return (
-        <div className="flex w-full gap-8 pt-[80px] pr-[140px] pl-[192px]">
+        <div className="flex w-full gap-8 py-[80px] pr-[140px] pl-[192px]">
             {/* Left Column - Event Info & Form */}
             <div className="flex-1">
                 <h1 className="border-b border-black pb-4 text-3xl font-bold text-black">
@@ -208,15 +208,21 @@ function RouteComponent() {
                                 Accepted payment methods:
                             </p>
                             <div className="flex justify-center gap-2">
-                                <div className="bg-blue-600 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    VISA
-                                </div>
-                                <div className="bg-red-500 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    MC
-                                </div>
-                                <div className="bg-blue-500 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    MB
-                                </div>
+                                <img
+                                    src="/images/vnpay.png"
+                                    alt="VNPAY"
+                                    className="h-6 w-8 object-contain"
+                                />
+                                <img
+                                    src="/images/vietqr.png"
+                                    alt="VietQR"
+                                    className="h-6 w-8 object-contain"
+                                />
+                                <img
+                                    src="/images/zalopay.png"
+                                    alt="ZaloPay"
+                                    className="h-6 w-8 object-contain"
+                                />
                             </div>
                         </div>
                     </div>

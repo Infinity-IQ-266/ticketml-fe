@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Calendar, Clock, CreditCard, MapPin } from 'lucide-react';
 
-export const Route = createFileRoute('/my-wallet/')({
+export const Route = createFileRoute('/event/$eventId/payment/confirm/')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
     return (
-        <div className="flex w-full gap-8 pt-[80px] pr-[140px] pl-[192px]">
+        <div className="flex w-full gap-8 py-[80px] pr-[140px] pl-[192px]">
             {/* Left Column - Event Info & Form */}
             <div className="flex-1">
                 <h1 className="border-b border-black pb-4 text-3xl font-bold text-black">
@@ -31,82 +31,100 @@ function RouteComponent() {
                     </div>
                 </div>
 
-                {/* Question Form */}
+                {/* PAYMENT INFO */}
                 <div className="mt-24 rounded-lg border-2 border-black">
                     <div className="border-b border-black px-6 py-4">
                         <h2 className="text-xl font-bold text-black">
-                            QUESTION FORM
+                            PAYMENT INFO
                         </h2>
                     </div>
 
                     <div className="space-y-6 p-6">
-                        <div>
-                            <label className="mb-3 block font-bold text-black">
-                                Họ & tên / Full name
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="Enter your answer"
-                                className="bg-gray-100 placeholder-gray-500 w-full rounded-md border-0 px-4 py-3 text-black focus:ring-2 focus:ring-black focus:outline-none"
-                            />
+                        {/* Ticket receiving info */}
+                        <div className="rounded-lg bg-gray-light p-4">
+                            <h3 className="mb-2 font-semibold text-black">
+                                Ticket receiving info
+                            </h3>
+                            <p className="text-sm text-gray">
+                                E-tickets will be displayed in "My Wallet"
+                                section of your account
+                            </p>
                         </div>
 
-                        <div>
-                            <label className="mb-3 block font-bold text-black">
-                                Email của bạn là gì?
-                            </label>
-                            <input
-                                type="email"
-                                placeholder="Enter your answer"
-                                className="bg-gray-100 placeholder-gray-500 w-full rounded-md border-0 px-4 py-3 text-black focus:ring-2 focus:ring-black focus:outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-3 block font-bold text-black">
-                                Số điện thoại của bạn là gì?
-                            </label>
-                            <input
-                                type="tel"
-                                placeholder="Enter your answer"
-                                className="bg-gray-100 placeholder-gray-500 w-full rounded-md border-0 px-4 py-3 text-black focus:ring-2 focus:ring-black focus:outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-4 block font-bold text-black">
-                                Thể lệ & Điều kiện
-                            </label>
-                            <div className="space-y-3">
-                                <div className="flex items-start gap-3">
+                        {/* Payment Method */}
+                        <div className="rounded-lg bg-gray-light p-4">
+                            <h3 className="mb-4 font-semibold text-black">
+                                Payment Method
+                            </h3>
+                            <div className="space-y-4">
+                                {/* VNPAY/Mobile Banking App */}
+                                <div className="flex items-center gap-3">
                                     <input
-                                        type="checkbox"
-                                        id="agree1"
-                                        className="mt-1 h-4 w-4 border-2 border-black text-black focus:ring-black"
+                                        type="radio"
+                                        id="vnpay"
+                                        name="payment"
+                                        className="h-4 w-4 border-2 border-black text-black focus:ring-black"
+                                        defaultChecked
                                     />
-                                    <label
-                                        htmlFor="agree1"
-                                        className="text-sm leading-relaxed text-black"
-                                    >
-                                        Tôi đồng ý nhận các thông tin và liên
-                                        lạc cũng cả chương trình ưu đãi qua
-                                        email và số điện thoại
-                                    </label>
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src="/images/vnpay.png"
+                                            alt="VNPAY"
+                                            className="h-6 w-8 object-contain"
+                                        />
+                                        <label
+                                            htmlFor="vnpay"
+                                            className="font-medium text-black"
+                                        >
+                                            VNPAY/Mobile Banking App
+                                        </label>
+                                    </div>
                                 </div>
-                                <div className="flex items-start gap-3">
+
+                                {/* VietQR */}
+                                <div className="flex items-center gap-3">
                                     <input
-                                        type="checkbox"
-                                        id="agree2"
-                                        className="mt-1 h-4 w-4 border-2 border-black text-black focus:ring-black"
+                                        type="radio"
+                                        id="vietqr"
+                                        name="payment"
+                                        className="h-4 w-4 border-2 border-black text-black focus:ring-black"
                                     />
-                                    <label
-                                        htmlFor="agree2"
-                                        className="text-sm leading-relaxed text-black"
-                                    >
-                                        Tôi đồng ý cho TicketML & BTC sử dụng
-                                        thông tin cá nhân nhằm mục đích vận hành
-                                        sự kiện
-                                    </label>
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src="/images/vietqr.png"
+                                            alt="VietQR"
+                                            className="h-6 w-8 object-contain"
+                                        />
+                                        <label
+                                            htmlFor="vietqr"
+                                            className="font-medium text-black"
+                                        >
+                                            VietQR
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* ZaloPay */}
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="radio"
+                                        id="zalopay"
+                                        name="payment"
+                                        className="h-4 w-4 border-2 border-black text-black focus:ring-black"
+                                    />
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src="/images/zalopay.png"
+                                            alt="ZaloPay"
+                                            className="h-6 w-8 object-contain"
+                                        />
+                                        <label
+                                            htmlFor="zalopay"
+                                            className="font-medium text-black"
+                                        >
+                                            ZaloPay
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -199,25 +217,20 @@ function RouteComponent() {
                         {/* Continue Payment Button */}
                         <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-green px-4 py-3 font-semibold text-white transition-colors hover:bg-green-darken">
                             <CreditCard className="h-5 w-5" />
-                            Continue Payment
+                            Payment
                         </button>
 
-                        {/* Payment Methods */}
-                        <div className="mt-4">
-                            <p className="text-gray-500 mb-3 text-center text-xs">
-                                Accepted payment methods:
+                        {/* Terms and Conditions */}
+                        <div className="mt-4 text-left">
+                            <p className="text-xs text-gray">
+                                By proceeding the order, you agree to the{' '}
+                                <a
+                                    href="#"
+                                    className="text-blue hover:underline"
+                                >
+                                    General Trading Conditions
+                                </a>
                             </p>
-                            <div className="flex justify-center gap-2">
-                                <div className="bg-blue-600 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    VISA
-                                </div>
-                                <div className="bg-red-500 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    MC
-                                </div>
-                                <div className="bg-blue-500 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    MB
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
