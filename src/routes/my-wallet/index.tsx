@@ -1,226 +1,154 @@
+import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
-import { Calendar, Clock, CreditCard, MapPin } from 'lucide-react';
+import { ChevronsDown, RefreshCcw, SquareArrowOutUpRight } from 'lucide-react';
+import QRCode from 'qrcode';
+import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/my-wallet/')({
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    const [url, setUrl] = useState('');
+    const [isShowingAvailableTickets, setIsShowingAvailableTickets] =
+        useState(false);
+    const [isShowingUsedTickets, setIsShowingUsedTickets] = useState(false);
+
+    useEffect(() => {
+        QRCode.toDataURL('https://ticketml.vercel.app', { width: 200 })
+            .then(setUrl)
+            .catch(console.error);
+    }, []);
     return (
-        <div className="flex w-full gap-8 pt-[80px] pr-[140px] pl-[192px]">
-            {/* Left Column - Event Info & Form */}
-            <div className="flex-1">
-                <h1 className="border-b border-black pb-4 text-3xl font-bold text-black">
-                    [Hà Nội] Những Thành Phố Mơ Màng Year End 2025
-                </h1>
-
-                {/* Time and Location */}
-                <div className="mt-1 flex flex-col gap-4">
-                    <div className="flex items-center gap-3">
-                        <Calendar className="h-5 w-5 text-gray" />
-                        <span className="text-gray-700">
-                            19:00 - 21:00, 04 Oct, 2025
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <MapPin className="h-5 w-5 text-gray" />
-                        <span className="text-gray-700">
-                            Khu vực ngoài trời tại Hà Nội
-                        </span>
-                    </div>
-                </div>
-
-                {/* Question Form */}
-                <div className="mt-24 rounded-lg border-2 border-black">
-                    <div className="border-b border-black px-6 py-4">
-                        <h2 className="text-xl font-bold text-black">
-                            QUESTION FORM
-                        </h2>
-                    </div>
-
-                    <div className="space-y-6 p-6">
-                        <div>
-                            <label className="mb-3 block font-bold text-black">
-                                Họ & tên / Full name
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="Enter your answer"
-                                className="bg-gray-100 placeholder-gray-500 w-full rounded-md border-0 px-4 py-3 text-black focus:ring-2 focus:ring-black focus:outline-none"
+        <div className="flex w-full flex-col px-5 py-5 md:flex-row md:px-10 md:py-10">
+            <div className="md:w-3/4">
+                <p className="text-2xl font-bold">My Wallet</p>
+                <div className="my-5 flex w-full flex-col rounded-xl border-2 border-black p-5 md:mb-0 md:flex-row">
+                    <div className="flex aspect-square items-center justify-center rounded-xl bg-secondary/30 p-3 drop-shadow-2xl md:min-w-1/2">
+                        {url ? (
+                            <img
+                                src={url}
+                                alt="QR Code"
+                                className="size-full bg-transparent"
                             />
+                        ) : (
+                            <img src="/images/mock-qr.svg" />
+                        )}
+                    </div>
+                    <div className="ms-5 flex w-full flex-col justify-center">
+                        <div className="grid grid-flow-col grid-rows-2 gap-4 py-5">
+                            <p className="font-bold">Name: </p>
+                            <p className="font-bold">Description:</p>
+                            <p className="text-end font-medium">Khanh Tran</p>
+                            <p className="text-end font-medium">
+                                An event enjoy-er
+                            </p>
                         </div>
 
-                        <div>
-                            <label className="mb-3 block font-bold text-black">
-                                Email của bạn là gì?
-                            </label>
-                            <input
-                                type="email"
-                                placeholder="Enter your answer"
-                                className="bg-gray-100 placeholder-gray-500 w-full rounded-md border-0 px-4 py-3 text-black focus:ring-2 focus:ring-black focus:outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-3 block font-bold text-black">
-                                Số điện thoại của bạn là gì?
-                            </label>
-                            <input
-                                type="tel"
-                                placeholder="Enter your answer"
-                                className="bg-gray-100 placeholder-gray-500 w-full rounded-md border-0 px-4 py-3 text-black focus:ring-2 focus:ring-black focus:outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-4 block font-bold text-black">
-                                Thể lệ & Điều kiện
-                            </label>
-                            <div className="space-y-3">
-                                <div className="flex items-start gap-3">
-                                    <input
-                                        type="checkbox"
-                                        id="agree1"
-                                        className="mt-1 h-4 w-4 border-2 border-black text-black focus:ring-black"
-                                    />
-                                    <label
-                                        htmlFor="agree1"
-                                        className="text-sm leading-relaxed text-black"
-                                    >
-                                        Tôi đồng ý nhận các thông tin và liên
-                                        lạc cũng cả chương trình ưu đãi qua
-                                        email và số điện thoại
-                                    </label>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <input
-                                        type="checkbox"
-                                        id="agree2"
-                                        className="mt-1 h-4 w-4 border-2 border-black text-black focus:ring-black"
-                                    />
-                                    <label
-                                        htmlFor="agree2"
-                                        className="text-sm leading-relaxed text-black"
-                                    >
-                                        Tôi đồng ý cho TicketML & BTC sử dụng
-                                        thông tin cá nhân nhằm mục đích vận hành
-                                        sự kiện
-                                    </label>
-                                </div>
-                            </div>
+                        <div className="mt-auto flex flex-col items-center md:w-full">
+                            <hr className="w-full bg-black" />
+                            <button className="mt-10 mb-5 inline-flex max-w-11/12 items-center justify-center gap-3 rounded-xl border-2 border-black bg-secondary px-20 py-2 drop-shadow-lg hover:cursor-pointer hover:bg-secondary-darken md:w-full">
+                                <p className="text-lg font-bold text-nowrap">
+                                    Reload
+                                </p>
+                                <RefreshCcw />
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* Right Column - Booking Timer & Ticket Info */}
-            <div className="w-96 space-y-6">
-                {/* Complete Your Booking Timer */}
-                <div className="overflow-hidden rounded-lg border-2 border-black">
-                    <div className="bg-black px-6 py-4 text-white">
-                        <h3 className="text-lg font-bold">
-                            Complete your booking
-                        </h3>
-                    </div>
-                    <div className="p-6">
-                        <div className="mb-4 flex items-center gap-3">
-                            <Clock className="text-red-500 h-5 w-5" />
-                            <span className="text-gray-700">
-                                Time remaining:
-                            </span>
-                        </div>
-                        {/* <div className="text-3xl font-bold text-red-500 mb-4">
-                            {formatTime(timeLeft)}
-                        </div> */}
-                        <p className="text-gray-600 text-sm">
-                            Please complete your booking within the time limit
-                            to secure your tickets.
-                        </p>
-                    </div>
+            <div className="my-5 flex w-full flex-col rounded-xl border-2 border-black p-5 md:my-0 md:ms-10 md:w-1/4">
+                <div className="group my-2 inline-flex items-center justify-center gap-4 hover:cursor-pointer">
+                    <p className="text-xl font-bold text-nowrap group-hover:underline">
+                        Wallet Information
+                    </p>
+                    <SquareArrowOutUpRight />
                 </div>
+                <hr className="w-full bg-black" />
 
-                {/* Ticket Information */}
-                <div className="overflow-hidden rounded-lg border-2 border-black">
-                    <div className="bg-black px-6 py-4 text-white">
-                        <h3 className="text-lg font-bold">
-                            Ticket Information
-                        </h3>
-                    </div>
-                    <div className="space-y-4 p-6">
-                        {/* Ticket Type */}
-                        <div className="border-gray-200 border-b pb-4">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <h4 className="font-semibold text-black">
-                                        Early Bird
-                                    </h4>
-                                    <p className="text-gray-600 text-sm">
-                                        General Admission
-                                    </p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="font-semibold">1x</p>
-                                    <p className="text-gray-600 text-sm">
-                                        390,000 VND
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Order Summary */}
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span className="text-gray-700">Subtotal:</span>
-                                <span className="font-semibold">
-                                    390,000 VND
-                                </span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-700">
-                                    Service fee:
-                                </span>
-                                <span className="font-semibold">
-                                    19,500 VND
-                                </span>
-                            </div>
-                            <div className="border-gray-200 border-t pt-2">
-                                <div className="flex justify-between">
-                                    <span className="font-bold text-black">
-                                        Total:
-                                    </span>
-                                    <span className="font-bold text-black">
-                                        409,500 VND
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Continue Payment Button */}
-                        <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-green px-4 py-3 font-semibold text-white transition-colors hover:bg-green-darken">
-                            <CreditCard className="h-5 w-5" />
-                            Continue Payment
-                        </button>
-
-                        {/* Payment Methods */}
-                        <div className="mt-4">
-                            <p className="text-gray-500 mb-3 text-center text-xs">
-                                Accepted payment methods:
-                            </p>
-                            <div className="flex justify-center gap-2">
-                                <div className="bg-blue-600 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    VISA
-                                </div>
-                                <div className="bg-red-500 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    MC
-                                </div>
-                                <div className="bg-blue-500 flex h-6 w-8 items-center justify-center rounded text-xs font-bold text-white">
-                                    MB
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div className="my-2 inline-flex items-center">
+                    <p className="text-xl font-bold">Name:</p>
+                    <p className="ms-auto max-w-1/2 truncate text-xl font-semibold group-hover:underline">
+                        0xa134fgf05423094859034204892349238350
+                    </p>
                 </div>
+                <hr className="w-full bg-black" />
+
+                <div className="my-2 inline-flex items-center">
+                    <p className="text-xl font-bold">Available Tickets:</p>
+                    <p className="ms-auto max-w-1/2 truncate text-xl font-semibold group-hover:underline">
+                        10
+                    </p>
+                </div>
+                <div
+                    className={cn(
+                        'grid transform grid-cols-2 duration-100',
+                        isShowingAvailableTickets
+                            ? 'animate-dropdown origin-top opacity-100 ease-out'
+                            : 'pointer-events-none size-0 origin-bottom opacity-0 ease-in',
+                    )}
+                >
+                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
+                    <p className="text-end text-xl font-medium">2</p>
+                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
+                    <p className="text-end text-xl font-medium">2</p>
+                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
+                    <p className="text-end text-xl font-medium">2</p>
+                </div>
+                <button
+                    className="my-2 self-center hover:text-gray"
+                    onClick={() =>
+                        setIsShowingAvailableTickets((prev) => !prev)
+                    }
+                >
+                    <ChevronsDown
+                        className={cn(
+                            isShowingAvailableTickets
+                                ? 'rotate-180 transition duration-100'
+                                : '',
+                        )}
+                    />
+                </button>
+                <hr className="w-full bg-black" />
+
+                <div className="my-2 inline-flex items-center">
+                    <p className="text-xl font-bold">Used Tickets:</p>
+                    <p className="ms-auto max-w-1/2 truncate text-xl font-semibold group-hover:underline">
+                        5
+                    </p>
+                </div>
+                <div
+                    className={cn(
+                        'grid transform grid-cols-2 duration-100',
+                        isShowingUsedTickets
+                            ? 'animate-dropdown origin-top opacity-100 ease-out'
+                            : 'pointer-events-none size-0 origin-bottom opacity-0 ease-in',
+                    )}
+                >
+                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
+                    <p className="text-end text-xl font-medium">1</p>
+                    <p className="truncate text-xl font-medium">
+                        [HCM] GENFEST:
+                    </p>
+                    <p className="text-end text-xl font-medium">2</p>
+                    <p className="truncate text-xl font-medium">
+                        [DN] Nhun Nhay Sol7:
+                    </p>
+                    <p className="text-end text-xl font-medium">2</p>
+                </div>
+                <button
+                    className="my-2 self-center hover:text-gray"
+                    onClick={() => setIsShowingUsedTickets((prev) => !prev)}
+                >
+                    <ChevronsDown
+                        className={cn(
+                            isShowingUsedTickets
+                                ? 'rotate-180 transition duration-100'
+                                : '',
+                        )}
+                    />
+                </button>
+                <hr className="w-full bg-black" />
             </div>
         </div>
     );

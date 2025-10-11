@@ -1,80 +1,26 @@
 import { LogoIcon } from '@/assets/icons';
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
-} from '@/components/ui/input-group';
-import { cn } from '@/lib/utils';
-import { Link, useMatchRoute } from '@tanstack/react-router';
-import { SearchIcon, SlidersHorizontal } from 'lucide-react';
+import { ScreenSize } from '@/types';
+import { Menu } from 'lucide-react';
+import { useWindowSize } from 'usehooks-ts';
 
-import { Cart, UserAvatar } from './components';
+import { Cart, HeaderDesktop } from './components';
 
 export const Header = () => {
-    const matchRoute = useMatchRoute();
+    const { width } = useWindowSize();
+
+    if (width > ScreenSize.XL) return <HeaderDesktop />;
 
     return (
-        <div className="inline-flex w-screen items-center border-b-2 border-black px-10 py-6 2xl:px-20">
-            <LogoIcon className="w-40" />
-            <p className="ms-3 text-4xl font-bold text-nowrap text-black">
+        <div className="inline-flex w-screen items-center border-b-2 border-black px-5 py-4 md:px-10 md:py-6 2xl:px-20">
+            <LogoIcon className="h-auto w-20 md:w-40" />
+            <p className="ms-3 hidden text-4xl font-bold text-nowrap text-black md:block">
                 Ticket ML
             </p>
-            <InputGroup className="ms-8 h-12 max-w-72 min-w-52 rounded-md border border-black 2xl:ms-16">
-                <InputGroupInput
-                    className="flex !text-2xl text-black placeholder-black/50! placeholder:text-2xl"
-                    placeholder="Search"
-                />
-                <InputGroupAddon>
-                    <SearchIcon className="size-6 text-black" />
-                </InputGroupAddon>
-
-                <InputGroupAddon align="inline-end">
-                    <InputGroupButton className="h-full rounded-full hover:cursor-pointer hover:bg-black/10!">
-                        <SlidersHorizontal className="size-6 text-black" />
-                    </InputGroupButton>
-                </InputGroupAddon>
-            </InputGroup>
 
             <div className="inline-flex w-full grow items-center justify-end">
-                <div className="inline-flex w-full max-w-96 justify-around px-8">
-                    <Link
-                        to="/"
-                        className={cn(
-                            'text-xl font-medium text-nowrap transition duration-200 hover:underline',
-                            matchRoute({ to: '/', fuzzy: true }) &&
-                                'font-semibold',
-                        )}
-                    >
-                        Events
-                    </Link>
-
-                    <Link
-                        to="/my-wallet"
-                        className={cn(
-                            'text-xl font-medium text-nowrap transition duration-200 hover:underline',
-                            matchRoute({ to: '/my-wallet', fuzzy: false }) &&
-                                'font-semibold',
-                        )}
-                    >
-                        My Wallet
-                    </Link>
-
-                    <Link
-                        to="/resources"
-                        className={cn(
-                            'text-xl font-medium text-nowrap transition duration-200 hover:underline',
-                            matchRoute({ to: '/resources', fuzzy: true }) &&
-                                'font-semibold',
-                        )}
-                    >
-                        Resources
-                    </Link>
-                </div>
-                <div className="inline-flex gap-8">
+                <div className="inline-flex items-center gap-4 md:gap-8">
                     <Cart />
-                    <UserAvatar />
-                    {/* <LoginButton /> */}
+                    <Menu size={36} className="hover:text-gray" />
                 </div>
             </div>
         </div>

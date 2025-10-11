@@ -37,41 +37,44 @@ export const UserAvatar = () => {
                     />
                 </div>
             </button>
-            {isShowingDropdown && (
-                <div className="animate-dropdown absolute top-full left-0 mt-3 flex w-full origin-top transform flex-col items-center overflow-hidden rounded-4xl border-2 border-black bg-white text-xl font-medium text-nowrap transition-all duration-300 ease-out">
-                    <button
-                        className="rounded-4x z-10 inline-flex w-full items-center justify-center px-3 py-2 text-xl font-medium text-nowrap transition duration-200 hover:cursor-pointer hover:bg-black/10"
-                        type="button"
-                        onClick={() =>
-                            console.log('Switch to Organizer account')
-                        }
-                    >
-                        <p className="truncate text-xl font-bold text-black/70">
-                            NTPMM Orgz
-                        </p>
-                    </button>
-                    <hr className="w-full border-t border-black" />
+            <div
+                className={cn(
+                    'absolute top-full left-0 mt-3 flex w-full transform flex-col items-center overflow-hidden rounded-4xl border-2 border-black bg-white text-xl font-medium text-nowrap transition-all duration-300',
+                    isShowingDropdown
+                        ? 'animate-dropdown origin-top opacity-100 ease-out'
+                        : 'animate-dropdown-reverse pointer-events-none origin-bottom opacity-0 ease-in',
+                )}
+            >
+                <button
+                    className="rounded-4x z-10 inline-flex w-full items-center justify-center px-3 py-2 text-xl font-medium text-nowrap transition duration-200 hover:cursor-pointer hover:bg-black/10"
+                    type="button"
+                    onClick={() => console.log('Switch to Organizer account')}
+                >
+                    <p className="truncate text-xl font-bold text-black/70">
+                        NTPMM Orgz
+                    </p>
+                </button>
+                <hr className="w-full border-t border-black" />
 
-                    <button
-                        className="rounded-4x z-10 inline-flex w-full items-center justify-center px-3 py-2 text-xl font-medium text-nowrap transition duration-200 hover:cursor-pointer hover:bg-black/10"
-                        onClick={() => console.log('Login with Google OAuth')}
-                    >
-                        <p className="truncate text-xl font-bold text-black/70">
-                            GENFEST Orgz
-                        </p>
-                    </button>
+                <button
+                    className="rounded-4x z-10 inline-flex w-full items-center justify-center px-3 py-2 text-xl font-medium text-nowrap transition duration-200 hover:cursor-pointer hover:bg-black/10"
+                    onClick={() => console.log('Login with Google OAuth')}
+                >
+                    <p className="truncate text-xl font-bold text-black/70">
+                        GENFEST Orgz
+                    </p>
+                </button>
 
-                    <hr className="w-full border-t border-black" />
+                <hr className="w-full border-t border-black" />
 
-                    <button
-                        className="rounded-4x z-10 inline-flex w-full items-center justify-center px-3 py-2 text-xl font-medium text-nowrap transition duration-200 hover:cursor-pointer hover:bg-red/10"
-                        type="button"
-                        onClick={() => console.log('Login with Google OAuth')}
-                    >
-                        <p className="text-xl font-bold text-red">Log out</p>
-                    </button>
-                </div>
-            )}
+                <button
+                    className="rounded-4x z-10 inline-flex w-full items-center justify-center px-3 py-2 text-xl font-medium text-nowrap transition duration-200 hover:cursor-pointer hover:bg-red/10"
+                    type="button"
+                    onClick={() => console.log('Login with Google OAuth')}
+                >
+                    <p className="text-xl font-bold text-red">Log out</p>
+                </button>
+            </div>
         </div>
     );
 };
