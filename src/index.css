@@ -13,6 +13,9 @@
     --color-gray-light: #d9d9d9;
     --color-white: #ffffff;
     --color-red: #ff5959;
+    --color-green: #22c55e;  
+    --color-green-darken: #16a34a; 
+    --color-blue: #3b82f6;
 
     --font-sans:
         'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',

@@ -1,0 +1,240 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { Calendar, Clock, CreditCard, MapPin } from 'lucide-react';
+
+export const Route = createFileRoute('/event/$eventId/payment/confirm/')({
+    component: RouteComponent,
+});
+
+function RouteComponent() {
+    return (
+        <div className="flex w-full gap-8 py-[80px] pr-[140px] pl-[192px]">
+            {/* Left Column - Event Info & Form */}
+            <div className="flex-1">
+                <h1 className="border-b border-black pb-4 text-3xl font-bold text-black">
+                    [Hà Nội] Những Thành Phố Mơ Màng Year End 2025
+                </h1>
+
+                {/* Time and Location */}
+                <div className="mt-1 flex flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                        <Calendar className="h-5 w-5 text-gray" />
+                        <span className="text-gray-700">
+                            19:00 - 21:00, 04 Oct, 2025
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <MapPin className="h-5 w-5 text-gray" />
+                        <span className="text-gray-700">
+                            Khu vực ngoài trời tại Hà Nội
+                        </span>
+                    </div>
+                </div>
+
+                {/* PAYMENT INFO */}
+                <div className="mt-24 rounded-lg border-2 border-black">
+                    <div className="border-b border-black px-6 py-4">
+                        <h2 className="text-xl font-bold text-black">
+                            PAYMENT INFO
+                        </h2>
+                    </div>
+
+                    <div className="space-y-6 p-6">
+                        {/* Ticket receiving info */}
+                        <div className="rounded-lg bg-gray-light p-4">
+                            <h3 className="mb-2 font-semibold text-black">
+                                Ticket receiving info
+                            </h3>
+                            <p className="text-sm text-gray">
+                                E-tickets will be displayed in "My Wallet"
+                                section of your account
+                            </p>
+                        </div>
+
+                        {/* Payment Method */}
+                        <div className="rounded-lg bg-gray-light p-4">
+                            <h3 className="mb-4 font-semibold text-black">
+                                Payment Method
+                            </h3>
+                            <div className="space-y-4">
+                                {/* VNPAY/Mobile Banking App */}
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="radio"
+                                        id="vnpay"
+                                        name="payment"
+                                        className="h-4 w-4 border-2 border-black text-black focus:ring-black"
+                                        defaultChecked
+                                    />
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src="/images/vnpay.png"
+                                            alt="VNPAY"
+                                            className="h-6 w-8 object-contain"
+                                        />
+                                        <label
+                                            htmlFor="vnpay"
+                                            className="font-medium text-black"
+                                        >
+                                            VNPAY/Mobile Banking App
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* VietQR */}
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="radio"
+                                        id="vietqr"
+                                        name="payment"
+                                        className="h-4 w-4 border-2 border-black text-black focus:ring-black"
+                                    />
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src="/images/vietqr.png"
+                                            alt="VietQR"
+                                            className="h-6 w-8 object-contain"
+                                        />
+                                        <label
+                                            htmlFor="vietqr"
+                                            className="font-medium text-black"
+                                        >
+                                            VietQR
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* ZaloPay */}
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="radio"
+                                        id="zalopay"
+                                        name="payment"
+                                        className="h-4 w-4 border-2 border-black text-black focus:ring-black"
+                                    />
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src="/images/zalopay.png"
+                                            alt="ZaloPay"
+                                            className="h-6 w-8 object-contain"
+                                        />
+                                        <label
+                                            htmlFor="zalopay"
+                                            className="font-medium text-black"
+                                        >
+                                            ZaloPay
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Right Column - Booking Timer & Ticket Info */}
+            <div className="w-96 space-y-6">
+                {/* Complete Your Booking Timer */}
+                <div className="overflow-hidden rounded-lg border-2 border-black">
+                    <div className="bg-black px-6 py-4 text-white">
+                        <h3 className="text-lg font-bold">
+                            Complete your booking
+                        </h3>
+                    </div>
+                    <div className="p-6">
+                        <div className="mb-4 flex items-center gap-3">
+                            <Clock className="text-red-500 h-5 w-5" />
+                            <span className="text-gray-700">
+                                Time remaining:
+                            </span>
+                        </div>
+                        {/* <div className="text-3xl font-bold text-red-500 mb-4">
+                            {formatTime(timeLeft)}
+                        </div> */}
+                        <p className="text-gray-600 text-sm">
+                            Please complete your booking within the time limit
+                            to secure your tickets.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Ticket Information */}
+                <div className="overflow-hidden rounded-lg border-2 border-black">
+                    <div className="bg-black px-6 py-4 text-white">
+                        <h3 className="text-lg font-bold">
+                            Ticket Information
+                        </h3>
+                    </div>
+                    <div className="space-y-4 p-6">
+                        {/* Ticket Type */}
+                        <div className="border-gray-200 border-b pb-4">
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <h4 className="font-semibold text-black">
+                                        Early Bird
+                                    </h4>
+                                    <p className="text-gray-600 text-sm">
+                                        General Admission
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-semibold">1x</p>
+                                    <p className="text-gray-600 text-sm">
+                                        390,000 VND
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Order Summary */}
+                        <div className="space-y-2">
+                            <div className="flex justify-between">
+                                <span className="text-gray-700">Subtotal:</span>
+                                <span className="font-semibold">
+                                    390,000 VND
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-700">
+                                    Service fee:
+                                </span>
+                                <span className="font-semibold">
+                                    19,500 VND
+                                </span>
+                            </div>
+                            <div className="border-gray-200 border-t pt-2">
+                                <div className="flex justify-between">
+                                    <span className="font-bold text-black">
+                                        Total:
+                                    </span>
+                                    <span className="font-bold text-black">
+                                        409,500 VND
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Continue Payment Button */}
+                        <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-green px-4 py-3 font-semibold text-white transition-colors hover:bg-green-darken">
+                            <CreditCard className="h-5 w-5" />
+                            Payment
+                        </button>
+
+                        {/* Terms and Conditions */}
+                        <div className="mt-4 text-left">
+                            <p className="text-xs text-gray">
+                                By proceeding the order, you agree to the{' '}
+                                <a
+                                    href="#"
+                                    className="text-blue hover:underline"
+                                >
+                                    General Trading Conditions
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
