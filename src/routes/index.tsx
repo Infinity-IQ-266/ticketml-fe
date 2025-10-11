@@ -17,7 +17,7 @@ function RouteComponent() {
 
                 <div className="relative w-full">
                     <img
-                        src="../../public/images/emxinhsayhi.png"
+                        src="/images/emxinhsayhi.png"
                         alt="emxinhsaybye"
                         className="h-auto w-full rounded-lg object-cover"
                     />
@@ -37,7 +37,7 @@ function RouteComponent() {
                     <h2 className="mb-6 text-2xl font-bold">Special events</h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         <EventCard
-                            image="/vietnamese-traditional-music-festival-with-lantern.jpg"
+                            image="/images/emxinhsayhi.png"
                             title="Hà Nội Những Tháng Năm Mùa Hạ Của Tôi 2025"
                             date="25 tháng 5 2025"
                             time="19:00 - 23:00"
@@ -46,7 +46,7 @@ function RouteComponent() {
                             tags={['Concert', 'Theater']}
                         />
                         <EventCard
-                            image="/pink-neon-concert-stage-with-performers.jpg"
+                            image="/images/emxinhsayhi.png"
                             title="Hà Nội 'SLAY IT' CONCERT - EP.2"
                             date="28 tháng 5 2025"
                             time="19:00 - 23:00"
@@ -55,7 +55,7 @@ function RouteComponent() {
                             tags={['Music', 'Theater', 'Concert']}
                         />
                         <EventCard
-                            image="/colorful-psychedelic-concert-poster-2025.jpg"
+                            image="/images/emxinhsayhi.png"
                             title="Hà Nội SOUNDSCAPE 2025"
                             date="20 tháng 5 2025"
                             time="19:00 - 23:00"
@@ -71,7 +71,7 @@ function RouteComponent() {
                     <h2 className="mb-6 text-2xl font-bold">Theaters & arts</h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         <EventCard
-                            image="/vietnamese-romantic-comedy-movie-poster.jpg"
+                            image="/images/emxinhsayhi.png"
                             title="Hà Nội Có Một Người Yêu Là Như Thế"
                             date="25 tháng 5 2025"
                             time="19:00 - 21:00"
@@ -80,7 +80,7 @@ function RouteComponent() {
                             tags={['Concert', 'Theater']}
                         />
                         <EventCard
-                            image="/pink-neon-concert-stage-with-performers.jpg"
+                            image="/images/emxinhsayhi.png"
                             title="Hà Nội 'SLAY IT' CONCERT - EP.2"
                             date="28 tháng 5 2025"
                             time="19:00 - 23:00"
@@ -89,7 +89,7 @@ function RouteComponent() {
                             tags={['Music', 'Theater', 'Concert']}
                         />
                         <EventCard
-                            image="/colorful-psychedelic-concert-poster-2025.jpg"
+                            image="/images/emxinhsayhi.png"
                             title="Hà Nội SOUNDSCAPE 2025"
                             date="20 tháng 5 2025"
                             time="19:00 - 23:00"
