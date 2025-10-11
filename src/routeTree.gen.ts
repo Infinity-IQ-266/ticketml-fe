@@ -10,6 +10,7 @@ import { Route as EventEventIdPaymentConfirmIndexRouteImport } from './routes/ev
 import { Route as EventEventIdPaymentIndexRouteImport } from './routes/event/$eventId/payment/index';
 import { Route as IndexRouteImport } from './routes/index';
 import { Route as MyWalletIndexRouteImport } from './routes/my-wallet/index';
+import { Route as Oauth2RedirectIndexRouteImport } from './routes/oauth2/redirect/index';
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index';
 
 const IndexRoute = IndexRouteImport.update({
@@ -25,6 +26,11 @@ const ResourcesIndexRoute = ResourcesIndexRouteImport.update({
 const MyWalletIndexRoute = MyWalletIndexRouteImport.update({
     id: '/my-wallet/',
     path: '/my-wallet/',
+    getParentRoute: () => rootRouteImport,
+} as any);
+const Oauth2RedirectIndexRoute = Oauth2RedirectIndexRouteImport.update({
+    id: '/oauth2/redirect/',
+    path: '/oauth2/redirect/',
     getParentRoute: () => rootRouteImport,
 } as any);
 const EventEventIdIndexRoute = EventEventIdIndexRouteImport.update({
@@ -50,6 +56,7 @@ export interface FileRoutesByFullPath {
     '/my-wallet': typeof MyWalletIndexRoute;
     '/resources': typeof ResourcesIndexRoute;
     '/event/$eventId': typeof EventEventIdIndexRoute;
+    '/oauth2/redirect': typeof Oauth2RedirectIndexRoute;
     '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute;
     '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute;
 }
@@ -58,6 +65,7 @@ export interface FileRoutesByTo {
     '/my-wallet': typeof MyWalletIndexRoute;
     '/resources': typeof ResourcesIndexRoute;
     '/event/$eventId': typeof EventEventIdIndexRoute;
+    '/oauth2/redirect': typeof Oauth2RedirectIndexRoute;
     '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute;
     '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute;
 }
@@ -67,6 +75,7 @@ export interface FileRoutesById {
     '/my-wallet/': typeof MyWalletIndexRoute;
     '/resources/': typeof ResourcesIndexRoute;
     '/event/$eventId/': typeof EventEventIdIndexRoute;
+    '/oauth2/redirect/': typeof Oauth2RedirectIndexRoute;
     '/event/$eventId/payment/': typeof EventEventIdPaymentIndexRoute;
     '/event/$eventId/payment/confirm/': typeof EventEventIdPaymentConfirmIndexRoute;
 }
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
         | '/my-wallet'
         | '/resources'
         | '/event/$eventId'
+        | '/oauth2/redirect'
         | '/event/$eventId/payment'
         | '/event/$eventId/payment/confirm';
     fileRoutesByTo: FileRoutesByTo;
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
         | '/my-wallet'
         | '/resources'
         | '/event/$eventId'
+        | '/oauth2/redirect'
         | '/event/$eventId/payment'
         | '/event/$eventId/payment/confirm';
     id:
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
         | '/my-wallet/'
         | '/resources/'
         | '/event/$eventId/'
+        | '/oauth2/redirect/'
         | '/event/$eventId/payment/'
         | '/event/$eventId/payment/confirm/';
     fileRoutesById: FileRoutesById;
@@ -102,6 +114,7 @@ export interface RootRouteChildren {
     MyWalletIndexRoute: typeof MyWalletIndexRoute;
     ResourcesIndexRoute: typeof ResourcesIndexRoute;
     EventEventIdIndexRoute: typeof EventEventIdIndexRoute;
+    Oauth2RedirectIndexRoute: typeof Oauth2RedirectIndexRoute;
     EventEventIdPaymentIndexRoute: typeof EventEventIdPaymentIndexRoute;
     EventEventIdPaymentConfirmIndexRoute: typeof EventEventIdPaymentConfirmIndexRoute;
 }
@@ -127,6 +140,13 @@ declare module '@tanstack/react-router' {
             path: '/my-wallet';
             fullPath: '/my-wallet';
             preLoaderRoute: typeof MyWalletIndexRouteImport;
+            parentRoute: typeof rootRouteImport;
+        };
+        '/oauth2/redirect/': {
+            id: '/oauth2/redirect/';
+            path: '/oauth2/redirect';
+            fullPath: '/oauth2/redirect';
+            preLoaderRoute: typeof Oauth2RedirectIndexRouteImport;
             parentRoute: typeof rootRouteImport;
         };
         '/event/$eventId/': {
@@ -158,6 +178,7 @@ const rootRouteChildren: RootRouteChildren = {
     MyWalletIndexRoute: MyWalletIndexRoute,
     ResourcesIndexRoute: ResourcesIndexRoute,
     EventEventIdIndexRoute: EventEventIdIndexRoute,
+    Oauth2RedirectIndexRoute: Oauth2RedirectIndexRoute,
     EventEventIdPaymentIndexRoute: EventEventIdPaymentIndexRoute,
     EventEventIdPaymentConfirmIndexRoute: EventEventIdPaymentConfirmIndexRoute,
 };

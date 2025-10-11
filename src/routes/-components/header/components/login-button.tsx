@@ -30,7 +30,9 @@ export const LoginButton = () => {
                 <button
                     className="group animate-dropdown absolute -bottom-14 left-0 z-10 inline-flex origin-top transform items-center rounded-4xl border-2 border-black bg-white px-3 py-2.5 text-xl font-medium text-nowrap transition-all duration-300 ease-out hover:cursor-pointer"
                     type="button"
-                    onClick={() => console.log('Login with Google OAuth')}
+                    onClick={() => {
+                        console.log('Login with Google OAuth');
+                    }}
                 >
                     <div className="pointer-events-none absolute inset-0 rounded-4xl bg-black/10 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                     <p className="text-xl font-medium">Google</p>

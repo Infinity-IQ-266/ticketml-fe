@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { SearchIcon, SlidersHorizontal } from 'lucide-react';
 
-import { Cart, UserAvatar } from '.';
+import { Cart, LoginButton, UserAvatar } from '.';
 
 export const HeaderDesktop = () => {
     const matchRoute = useMatchRoute();
@@ -73,8 +73,8 @@ export const HeaderDesktop = () => {
                 </div>
                 <div className="inline-flex gap-8">
                     <Cart />
-                    <UserAvatar />
-                    {/* <LoginButton /> */}
+                    {<UserAvatar />}
+                    <LoginButton />
                 </div>
             </div>
         </div>
