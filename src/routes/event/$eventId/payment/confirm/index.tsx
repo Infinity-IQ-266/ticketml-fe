@@ -2,7 +2,7 @@ import {
     createOrderMutation,
     getEventByIdOptions,
 } from '@/services/client/@tanstack/react-query.gen';
-import type { Event } from '@/types';
+import type { Event, Order } from '@/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Calendar, Clock, CreditCard, MapPin } from 'lucide-react';
@@ -27,8 +27,8 @@ function RouteComponent() {
 
     const createOrder = useMutation({
         ...createOrderMutation(),
-        onSuccess(data, variables, onMutateResult, context) {
-            const paymentUrl = (data.data as any)?.paymentUrl as string;
+        onSuccess(data) {
+            const paymentUrl = (data.data as Order)?.paymentUrl;
             window.location.href = paymentUrl;
         },
     });
