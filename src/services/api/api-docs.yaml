@@ -1,0 +1,453 @@
+openapi: 3.1.0
+info:
+    title: OpenAPI definition
+    version: v0
+servers:
+    - url: http://ec2-13-250-47-128.ap-southeast-1.compute.amazonaws.com:8080
+      description: Generated server url
+paths:
+    /api/v1/organizer/organizations/{orgId}/events:
+        get:
+            tags:
+                - organizer-controller
+            operationId: getEventsByOrganization
+            parameters:
+                - name: orgId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+        post:
+            tags:
+                - organizer-controller
+            operationId: createEvent
+            parameters:
+                - name: orgId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/EventCreateRequestDTO'
+                required: true
+            responses:
+                '201':
+                    description: Created
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/organizer/events/{eventId}/ticketTypes:
+        post:
+            tags:
+                - organizer-controller
+            operationId: addTicketTypeToEvent
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TicketTypeRequestDTO'
+                required: true
+            responses:
+                '201':
+                    description: Created
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/organizer/events/{eventId}/checkIn:
+        post:
+            tags:
+                - organizer-controller
+            operationId: checkInTicket
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CheckInRequestDTO'
+                required: true
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/orders:
+        post:
+            tags:
+                - order-controller
+            operationId: createOrder
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/OrderRequestDTO'
+                required: true
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/organizer/ticketTypes/{ticketTypeId}:
+        patch:
+            tags:
+                - organizer-controller
+            operationId: updateTicketType
+            parameters:
+                - name: ticketTypeId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TicketTypeRequestDTO'
+                required: true
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/organizer/events/{eventId}:
+        patch:
+            tags:
+                - organizer-controller
+            operationId: updateEvent
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/EventUpdateRequestDTO'
+                required: true
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/users/me:
+        get:
+            tags:
+                - user-controller
+            operationId: getCurrentUser
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/users/me/tickets:
+        get:
+            tags:
+                - user-controller
+            operationId: getTickets
+            parameters:
+                - name: status
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+                      default: ACTIVE
+                      enum:
+                          - ACTIVE
+                          - USED
+                          - CANCELED
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/users/me/orders:
+        get:
+            tags:
+                - user-controller
+            operationId: getMyOrderHistory
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/payment/vnpay-ipn:
+        get:
+            tags:
+                - payment-controller
+            operationId: handleVnpayIPN
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/organizer/organizations:
+        get:
+            tags:
+                - organizer-controller
+            operationId: getMyOrganizations
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/events:
+        get:
+            tags:
+                - event-controller
+            operationId: getAllEvents
+            parameters:
+                - name: page
+                  in: query
+                  required: false
+                  schema:
+                      type: integer
+                      format: int32
+                      default: 0
+                - name: size
+                  in: query
+                  required: false
+                  schema:
+                      type: integer
+                      format: int32
+                      default: 20
+                - name: direction
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+                      default: ASC
+                      enum:
+                          - ASC
+                          - DESC
+                - name: attribute
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+                      default: createdAt
+                - name: title
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+                - name: startDate
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+                      format: date
+                - name: endDate
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+                      format: date
+                - name: location
+                  in: query
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/events/{eventId}:
+        get:
+            tags:
+                - event-controller
+            operationId: getEventById
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+components:
+    schemas:
+        EventCreateRequestDTO:
+            type: object
+            properties:
+                title:
+                    type: string
+                    minLength: 1
+                description:
+                    type: string
+                startDate:
+                    type: string
+                    format: date-time
+                endDate:
+                    type: string
+                    format: date-time
+                location:
+                    type: string
+                    minLength: 1
+                ticketTypes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/TicketTypeRequestDTO'
+                    minItems: 1
+            required:
+                - endDate
+                - location
+                - startDate
+                - ticketTypes
+                - title
+        TicketTypeRequestDTO:
+            type: object
+            properties:
+                type:
+                    type: string
+                    minLength: 1
+                price:
+                    type: number
+                    format: double
+                totalQuantity:
+                    type: integer
+                    format: int32
+                ticketTypeStatus:
+                    type: string
+                    enum:
+                        - ACTIVE
+                        - SOLD_OUT
+                        - CANCELED
+            required:
+                - type
+        PagedResult:
+            type: object
+            properties:
+                pageNumber:
+                    type: integer
+                    format: int32
+                pageSize:
+                    type: integer
+                    format: int32
+                totalElements:
+                    type: integer
+                    format: int64
+                totalPages:
+                    type: integer
+                    format: int32
+        Response:
+            type: object
+            properties:
+                serverDateTime:
+                    type: string
+                status:
+                    type: integer
+                    format: int32
+                code:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                exception:
+                    type: string
+                traceId:
+                    type: string
+                data: {}
+                pagedResult:
+                    $ref: '#/components/schemas/PagedResult'
+        CheckInRequestDTO:
+            type: object
+            properties:
+                qrCode:
+                    type: string
+                    minLength: 1
+            required:
+                - qrCode
+        OrderItemRequestDTO:
+            type: object
+            properties:
+                ticketTypeId:
+                    type: integer
+                    format: int64
+                quantity:
+                    type: integer
+                    format: int32
+                    minimum: 1
+            required:
+                - ticketTypeId
+        OrderRequestDTO:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/OrderItemRequestDTO'
+                    minItems: 1
+            required:
+                - items
+        EventUpdateRequestDTO:
+            type: object
+            properties:
+                title:
+                    type: string
+                description:
+                    type: string
+                location:
+                    type: string
+                startDate:
+                    type: string
+                    format: date
+                endDate:
+                    type: string
+                    format: date

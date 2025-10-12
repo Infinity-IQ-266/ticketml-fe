@@ -1,3 +1,6 @@
+import { getAllEventsOptions } from '@/services/client/@tanstack/react-query.gen';
+import type { Event } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -8,6 +11,12 @@ export const Route = createFileRoute('/')({
 });
 
 function RouteComponent() {
+    const { data: response } = useQuery({
+        ...getAllEventsOptions(),
+        staleTime: 5 * 60 * 1000,
+    });
+    const events = (response?.data as Event[]) ?? [];
+
     return (
         <div className="flex flex-col items-center px-10">
             <div className="relative flex w-5/6 flex-row items-center justify-center gap-18 py-5">
@@ -36,33 +45,20 @@ function RouteComponent() {
                 <section className="mb-12">
                     <h2 className="mb-6 text-2xl font-bold">Special events</h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        <EventCard
-                            image="/images/emxinhsayhi.png"
-                            title="Hà Nội Những Tháng Năm Mùa Hạ Của Tôi 2025"
-                            date="25 tháng 5 2025"
-                            time="19:00 - 23:00"
-                            location="Sân khấu Hòa Bình"
-                            price="From 200.000 đ"
-                            tags={['Concert', 'Theater']}
-                        />
-                        <EventCard
-                            image="/images/emxinhsayhi.png"
-                            title="Hà Nội 'SLAY IT' CONCERT - EP.2"
-                            date="28 tháng 5 2025"
-                            time="19:00 - 23:00"
-                            location="Sân khấu Hòa Bình"
-                            price="From 1.900.000 đ"
-                            tags={['Music', 'Theater', 'Concert']}
-                        />
-                        <EventCard
-                            image="/images/emxinhsayhi.png"
-                            title="Hà Nội SOUNDSCAPE 2025"
-                            date="20 tháng 5 2025"
-                            time="19:00 - 23:00"
-                            location="Vạn Phúc City"
-                            price="From 699.000 đ"
-                            tags={['Party', 'Concert']}
-                        />
+                        {events.map((event) => (
+                            <EventCard
+                                id={event.id}
+                                image="/images/emxinhsayhi.png"
+                                title={event.title}
+                                date={event.startDate?.toLocaleString() ?? ''}
+                                location={event.location}
+                                price={
+                                    'From: ' + event.ticketTypes[0].price + ' đ'
+                                }
+                                tags={['Concert', 'Theater']}
+                                time="19:00 - 23:00"
+                            />
+                        ))}
                     </div>
                 </section>
 
@@ -70,33 +66,20 @@ function RouteComponent() {
                 <section>
                     <h2 className="mb-6 text-2xl font-bold">Theaters & arts</h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        <EventCard
-                            image="/images/emxinhsayhi.png"
-                            title="Hà Nội Có Một Người Yêu Là Như Thế"
-                            date="25 tháng 5 2025"
-                            time="19:00 - 21:00"
-                            location="Nhà hát Hòa Bình"
-                            price="From 200.000 đ"
-                            tags={['Concert', 'Theater']}
-                        />
-                        <EventCard
-                            image="/images/emxinhsayhi.png"
-                            title="Hà Nội 'SLAY IT' CONCERT - EP.2"
-                            date="28 tháng 5 2025"
-                            time="19:00 - 23:00"
-                            location="Sân khấu Hòa Bình"
-                            price="From 1.900.000 đ"
-                            tags={['Music', 'Theater', 'Concert']}
-                        />
-                        <EventCard
-                            image="/images/emxinhsayhi.png"
-                            title="Hà Nội SOUNDSCAPE 2025"
-                            date="20 tháng 5 2025"
-                            time="19:00 - 23:00"
-                            location="Vạn Phúc City"
-                            price="From 699.000 đ"
-                            tags={['Party', 'Concert']}
-                        />
+                        {events.map((event) => (
+                            <EventCard
+                                id={event.id}
+                                image="/images/emxinhsayhi.png"
+                                title={event.title}
+                                date={event.startDate?.toLocaleString() ?? ''}
+                                location={event.location}
+                                price={
+                                    'From: ' + event.ticketTypes[0].price + ' đ'
+                                }
+                                tags={['Concert', 'Theater']}
+                                time="19:00 - 23:00"
+                            />
+                        ))}
                     </div>
                 </section>
             </div>

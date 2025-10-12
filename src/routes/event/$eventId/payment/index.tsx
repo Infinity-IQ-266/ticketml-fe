@@ -1,4 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { getEventByIdOptions } from '@/services/client/@tanstack/react-query.gen';
+import type { Event } from '@/types';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Calendar, Clock, CreditCard, MapPin } from 'lucide-react';
 
 export const Route = createFileRoute('/event/$eventId/payment/')({
@@ -6,28 +9,40 @@ export const Route = createFileRoute('/event/$eventId/payment/')({
 });
 
 function RouteComponent() {
+    const { eventId } = Route.useParams();
+    const navigate = useNavigate();
+
+    const { data: response } = useQuery({
+        ...getEventByIdOptions({
+            path: {
+                eventId: eventId as unknown as number,
+            },
+        }),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const event = (response?.data as Event) ?? null;
+
     return (
         <div className="flex w-full gap-8 py-[80px] pr-[140px] pl-[192px]">
             {/* Left Column - Event Info & Form */}
             <div className="flex-1">
                 <h1 className="border-b border-black pb-4 text-3xl font-bold text-black">
-                    [Hà Nội] Những Thành Phố Mơ Màng Year End 2025
+                    {event?.title}
                 </h1>
 
                 {/* Time and Location */}
                 <div className="mt-1 flex flex-col gap-4">
                     <div className="flex items-center gap-3">
                         <Calendar className="h-5 w-5 text-gray" />
-                        <span className="text-gray-700">
-                            19:00 - 21:00, 04 Oct, 2025
+                        <span className="text-gray">
+                            {event?.startDate?.toLocaleString()}
                         </span>
                     </div>
 
                     <div className="flex items-center gap-3">
                         <MapPin className="h-5 w-5 text-gray" />
-                        <span className="text-gray-700">
-                            Khu vực ngoài trời tại Hà Nội
-                        </span>
+                        <span className="text-gray-700">{event?.location}</span>
                     </div>
                 </div>
 
@@ -153,7 +168,7 @@ function RouteComponent() {
                             <div className="flex items-start justify-between">
                                 <div>
                                     <h4 className="font-semibold text-black">
-                                        Early Bird
+                                        {event?.ticketTypes[0].type}
                                     </h4>
                                     <p className="text-gray-600 text-sm">
                                         General Admission
@@ -162,7 +177,7 @@ function RouteComponent() {
                                 <div className="text-right">
                                     <p className="font-semibold">1x</p>
                                     <p className="text-gray-600 text-sm">
-                                        390,000 VND
+                                        {event?.ticketTypes[0].price} VND
                                     </p>
                                 </div>
                             </div>
@@ -173,7 +188,7 @@ function RouteComponent() {
                             <div className="flex justify-between">
                                 <span className="text-gray-700">Subtotal:</span>
                                 <span className="font-semibold">
-                                    390,000 VND
+                                    {event?.ticketTypes[0].price} VND
                                 </span>
                             </div>
                             <div className="flex justify-between">
@@ -181,7 +196,7 @@ function RouteComponent() {
                                     Service fee:
                                 </span>
                                 <span className="font-semibold">
-                                    19,500 VND
+                                    {event?.ticketTypes[0].price * 0.08} VND
                                 </span>
                             </div>
                             <div className="border-gray-200 border-t pt-2">
@@ -190,14 +205,24 @@ function RouteComponent() {
                                         Total:
                                     </span>
                                     <span className="font-bold text-black">
-                                        409,500 VND
+                                        {event?.ticketTypes[0].price * 1.08} VND
                                     </span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Continue Payment Button */}
-                        <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-green px-4 py-3 font-semibold text-white transition-colors hover:bg-green-darken">
+                        <button
+                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-green px-4 py-3 font-semibold text-white transition-colors hover:cursor-pointer hover:bg-green-darken"
+                            onClick={() => {
+                                navigate({
+                                    to: '/event/$eventId/payment/confirm',
+                                    params: {
+                                        eventId,
+                                    },
+                                });
+                            }}
+                        >
                             <CreditCard className="h-5 w-5" />
                             Continue Payment
                         </button>

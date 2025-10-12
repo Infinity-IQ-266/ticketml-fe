@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from '@tanstack/react-router';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 
 interface EventCardProps {
+    id: number;
     image: string;
     title: string;
     date: string;
@@ -13,6 +15,7 @@ interface EventCardProps {
 }
 
 export function EventCard({
+    id,
     image,
     title,
     date,
@@ -21,6 +24,7 @@ export function EventCard({
     price,
     tags,
 }: EventCardProps) {
+    const navigate = useNavigate();
     return (
         <Card className="overflow-hidden transition-shadow hover:shadow-lg">
             <div className="relative">
@@ -63,6 +67,12 @@ export function EventCard({
                     <Button
                         variant="outline"
                         className="!bg-primary hover:bg-primary-darken!"
+                        onClick={() =>
+                            navigate({
+                                to: '/event/$eventId',
+                                params: { eventId: id.toString() },
+                            })
+                        }
                     >
                         View Events
                     </Button>

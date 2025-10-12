@@ -11,7 +11,7 @@ export const Header = () => {
     if (width > ScreenSize.XL) return <HeaderDesktop />;
 
     return (
-        <div className="inline-flex w-screen items-center border-b-2 border-black px-5 py-4 md:px-10 md:py-6 2xl:px-20">
+        <div className="z-50 inline-flex w-screen items-center border-b-2 border-black px-5 py-4 md:px-10 md:py-6 2xl:px-20">
             <LogoIcon className="h-auto w-20 md:w-40" />
             <p className="ms-3 hidden text-4xl font-bold text-nowrap text-black md:block">
                 Ticket ML

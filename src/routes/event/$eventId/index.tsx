@@ -1,4 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { getEventByIdOptions } from '@/services/client/@tanstack/react-query.gen';
+import type { Event } from '@/types';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Calendar, ChevronsDown, DollarSign, MapPin } from 'lucide-react';
 
 export const Route = createFileRoute('/event/$eventId/')({
@@ -6,13 +9,26 @@ export const Route = createFileRoute('/event/$eventId/')({
 });
 
 function RouteComponent() {
+    const navigate = useNavigate();
+    const { eventId } = Route.useParams();
+
+    const { data: response } = useQuery({
+        ...getEventByIdOptions({
+            path: {
+                eventId: eventId as unknown as number,
+            },
+        }),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const event = (response?.data as Event) ?? null;
     return (
         <div className="flex w-full flex-col px-10">
             <div className="my-10 flex flex-row justify-center rounded-xl">
                 <div className="flex max-w-1/3 flex-col rounded-l-xl border border-r-0 border-black bg-gray-light p-6">
                     <div className="w-full rounded-xl border border-black bg-primary p-4">
                         <p className="text-xl font-bold text-wrap">
-                            [Hà Nội] Những Thành Phố Mơ Màng Year End 2025
+                            {event?.title}
                         </p>
                     </div>
 
@@ -21,15 +37,25 @@ function RouteComponent() {
                         <MapPin className="text-black" />
                         <DollarSign className="text-black" />
                         <p className="text-nowrap">
-                            16:00 - 22:30, 21th December, 2025
+                            {event?.startDate?.toLocaleString()}
                         </p>
-                        <p className="text-nowrap">Ha Noi City</p>
-                        <p className="text-nowrap">700.000 VND</p>
+                        <p className="">{event?.location}</p>
+                        <p className="text-nowrap">
+                            {event?.ticketTypes[0].price} VND
+                        </p>
                     </div>
 
                     <div className="mt-auto flex flex-col items-center">
                         <hr className="w-full bg-black" />
-                        <button className="mt-10 mb-5 max-w-11/12 rounded-xl border-2 border-black bg-primary px-20 py-2 drop-shadow-lg hover:cursor-pointer hover:bg-primary-darken">
+                        <button
+                            className="mt-10 mb-5 max-w-11/12 rounded-xl border-2 border-black bg-primary px-20 py-2 drop-shadow-lg hover:cursor-pointer hover:bg-primary-darken"
+                            onClick={() =>
+                                navigate({
+                                    to: '/event/$eventId/payment',
+                                    params: { eventId },
+                                })
+                            }
+                        >
                             <p className="text-lg font-bold">Buy ticket now</p>
                         </button>
                     </div>

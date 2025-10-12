@@ -16,10 +16,15 @@ export const HeaderDesktop = () => {
 
     return (
         <div className="inline-flex w-screen items-center border-b-2 border-black px-10 py-6 2xl:px-20">
-            <LogoIcon className="w-40" />
-            <p className="ms-3 text-4xl font-bold text-nowrap text-black">
-                Ticket ML
-            </p>
+            <Link
+                className="inline-flex items-center hover:cursor-pointer"
+                to="/"
+            >
+                <LogoIcon className="w-20" />
+                <p className="ms-3 text-4xl font-bold text-nowrap text-black">
+                    Ticket ML
+                </p>
+            </Link>
             <InputGroup className="ms-8 h-12 max-w-72 min-w-52 rounded-md border border-black 2xl:ms-16">
                 <InputGroupInput
                     className="flex !text-2xl text-black placeholder-black/50! placeholder:text-2xl"
