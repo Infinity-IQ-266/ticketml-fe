@@ -7,3 +7,14 @@ export type TicketType = {
     status: string | null;
 };
 
+export type Ticket = {
+    id: number;
+    orderId: number;
+    eventId: number;
+    checkedIn: boolean;
+    eventLocation: string;
+    eventName: string;
+    eventStartDate: string;
+    qrCode: string;
+    ticketTypeName: string;
+};

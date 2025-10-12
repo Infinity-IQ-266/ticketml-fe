@@ -5,6 +5,7 @@ import {
     InputGroupButton,
     InputGroupInput,
 } from '@/components/ui/input-group';
+import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { SearchIcon, SlidersHorizontal } from 'lucide-react';
@@ -13,6 +14,7 @@ import { Cart, LoginButton, UserAvatar } from '.';
 
 export const HeaderDesktop = () => {
     const matchRoute = useMatchRoute();
+    const { data: meResponse } = useMe();
 
     return (
         <div className="inline-flex w-screen items-center border-b-2 border-black px-10 py-6 2xl:px-20">
@@ -78,8 +80,7 @@ export const HeaderDesktop = () => {
                 </div>
                 <div className="inline-flex gap-8">
                     <Cart />
-                    {<UserAvatar />}
-                    <LoginButton />
+                    {meResponse ? <UserAvatar /> : <LoginButton />}
                 </div>
             </div>
         </div>

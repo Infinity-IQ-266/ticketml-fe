@@ -1,5 +1,9 @@
 import { UserIcon } from '@/assets/icons';
+import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
+import { refreshClient } from '@/services/client/client.gen';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { ChevronDown } from 'lucide-react';
 import { type RefObject, useRef, useState } from 'react';
 import { useOnClickOutside } from 'usehooks-ts';
@@ -8,9 +12,25 @@ export const UserAvatar = () => {
     const [isShowingDropdown, setIsShowingDropdown] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    const { data: meData } = useMe();
+
+    // const { data: orgResponse } = useQuery({
+    //     ...getMyOrganizationsOptions(),
+    //     staleTime: 60 * 60 * 1000,
+    // });
+
     useOnClickOutside(ref as RefObject<HTMLDivElement>, () =>
         setIsShowingDropdown(false),
     );
+
+    const handleLogout = () => {
+        localStorage.removeItem('access_token');
+        refreshClient();
+        queryClient.removeQueries();
+        navigate({ to: '/' });
+    };
     return (
         <div
             className="relative w-fit rounded-4xl border-2 border-black drop-shadow-xl"
@@ -20,14 +40,16 @@ export const UserAvatar = () => {
                 className="inline-flex items-center justify-center rounded-4xl transition duration-200 hover:cursor-pointer hover:bg-black/10"
                 type="button"
                 title="User Avatar"
-                onClick={() => setIsShowingDropdown((prev) => !prev)}
+                onClick={() => {
+                    setIsShowingDropdown((prev) => !prev);
+                }}
             >
                 <div className="-ml-[2px] inline-flex size-14 items-center justify-center rounded-full border-2 border-black">
                     <UserIcon className="aspect-[34/38] h-auto w-8" />
                 </div>
                 <div className="inline-flex items-center justify-center px-2">
                     <p className="max-w-28 truncate text-xl font-semibold text-nowrap">
-                        Khanh Tran
+                        {meData?.firstName}
                     </p>
                     <ChevronDown
                         className={cn(
@@ -70,7 +92,7 @@ export const UserAvatar = () => {
                 <button
                     className="rounded-4x z-10 inline-flex w-full items-center justify-center px-3 py-2 text-xl font-medium text-nowrap transition duration-200 hover:cursor-pointer hover:bg-red/10"
                     type="button"
-                    onClick={() => console.log('Login with Google OAuth')}
+                    onClick={handleLogout}
                 >
                     <p className="text-xl font-bold text-red">Log out</p>
                 </button>

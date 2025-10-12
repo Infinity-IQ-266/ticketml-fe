@@ -1,4 +1,7 @@
 import { cn } from '@/lib/utils';
+import { getTicketsOptions } from '@/services/client/@tanstack/react-query.gen';
+import type { Ticket } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { ChevronsDown, RefreshCcw, SquareArrowOutUpRight } from 'lucide-react';
 import QRCode from 'qrcode';
@@ -14,7 +17,15 @@ function RouteComponent() {
         useState(false);
     const [isShowingUsedTickets, setIsShowingUsedTickets] = useState(false);
 
+    const { data: response } = useQuery({
+        ...getTicketsOptions(),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const tickets = (response?.data as Ticket[]) ?? [];
+
     useEffect(() => {
+        console.log(response?.data);
         QRCode.toDataURL('https://ticketml.vercel.app', { width: 200 })
             .then(setUrl)
             .catch(console.error);
@@ -77,7 +88,7 @@ function RouteComponent() {
                 <div className="my-2 inline-flex items-center">
                     <p className="text-xl font-bold">Available Tickets:</p>
                     <p className="ms-auto max-w-1/2 truncate text-xl font-semibold group-hover:underline">
-                        10
+                        {tickets.length}
                     </p>
                 </div>
                 <div
@@ -88,12 +99,16 @@ function RouteComponent() {
                             : 'pointer-events-none size-0 origin-bottom opacity-0 ease-in',
                     )}
                 >
-                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
-                    <p className="text-end text-xl font-medium">2</p>
-                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
-                    <p className="text-end text-xl font-medium">2</p>
-                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
-                    <p className="text-end text-xl font-medium">2</p>
+                    {tickets.map((ticket) => (
+                        <>
+                            <p className="text-xl font-medium">
+                                {ticket.eventName}
+                            </p>
+                            <p className="ms-auto text-end text-xl font-semibold">
+                                1
+                            </p>
+                        </>
+                    ))}
                 </div>
                 <button
                     className="my-2 self-center hover:text-gray"

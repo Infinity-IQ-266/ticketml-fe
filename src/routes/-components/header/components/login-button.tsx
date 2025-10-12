@@ -1,4 +1,5 @@
 import { GoogleIcon } from '@/assets/icons';
+import { BACKEND_URL } from '@/envs';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
 import { type RefObject, useRef, useState } from 'react';
@@ -32,6 +33,7 @@ export const LoginButton = () => {
                     type="button"
                     onClick={() => {
                         console.log('Login with Google OAuth');
+                        window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
                     }}
                 >
                     <div className="pointer-events-none absolute inset-0 rounded-4xl bg-black/10 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />

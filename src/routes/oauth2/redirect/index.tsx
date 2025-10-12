@@ -12,7 +12,12 @@ function RouteComponent() {
 
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        if (token) navigate({ to: '/' });
+
+        const timeout = setTimeout(() => {
+            if (token) navigate({ to: '/' });
+        }, 3000);
+
+        return () => clearTimeout(timeout);
     }, []);
 
     useEffect(() => {
