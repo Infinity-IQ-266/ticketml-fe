@@ -3,7 +3,7 @@ info:
     title: OpenAPI definition
     version: v0
 servers:
-    - url: http://api.ticketml.dpdns.org
+    - url: https://api.ticketml.dpdns.org
       description: Generated server url
 paths:
     /api/v1/organizer/organizations/{orgId}/events:
