@@ -21,8 +21,7 @@ export type CreateClientConfig<T extends ClientOptions = ClientOptions2> = (
 
 export let client = createClient(
     createConfig<ClientOptions2>({
-        baseUrl:
-            'http://ec2-13-250-47-128.ap-southeast-1.compute.amazonaws.com:8080',
+        baseUrl: 'http://api.ticketml.dpdns.org',
         headers: localStorage.getItem('access_token')
             ? {
                   Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -36,8 +35,7 @@ export const getClient = () => client;
 export const refreshClient = () => {
     client = createClient(
         createConfig<ClientOptions2>({
-            baseUrl:
-                'http://ec2-13-250-47-128.ap-southeast-1.compute.amazonaws.com:8080',
+            baseUrl: 'http://api.ticketml.dpdns.org',
             headers: localStorage.getItem('access_token')
                 ? {
                       Authorization: `Bearer ${localStorage.getItem('access_token')}`,
