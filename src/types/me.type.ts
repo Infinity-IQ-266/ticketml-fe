@@ -1,6 +1,5 @@
 export type MeData = {
-    firstName: string;
-    lastname: string | null;
+    fullName: string;
     email: string;
     imageUrl: string | null;
     phoneNumber: string | null;

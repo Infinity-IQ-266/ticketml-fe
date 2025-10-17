@@ -49,7 +49,7 @@ export const UserAvatar = () => {
                 </div>
                 <div className="inline-flex items-center justify-center px-2">
                     <p className="max-w-28 truncate text-xl font-semibold text-nowrap">
-                        {meData?.firstName}
+                        {meData?.fullName}
                     </p>
                     <ChevronDown
                         className={cn(
