@@ -19,28 +19,8 @@ export type CreateClientConfig<T extends ClientOptions = ClientOptions2> = (
     override?: Config<ClientOptions & T>,
 ) => Config<Required<ClientOptions> & T>;
 
-export let client = createClient(
+export const client = createClient(
     createConfig<ClientOptions2>({
-        baseUrl: 'https://api.ticketml.dpdns.org',
-        headers: localStorage.getItem('access_token')
-            ? {
-                  Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-              }
-            : {},
+        baseURL: 'https://api.ticketml.dpdns.org',
     }),
 );
-
-export const getClient = () => client;
-
-export const refreshClient = () => {
-    client = createClient(
-        createConfig<ClientOptions2>({
-            baseUrl: 'https://api.ticketml.dpdns.org',
-            headers: localStorage.getItem('access_token')
-                ? {
-                      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-                  }
-                : {},
-        }),
-    );
-};
