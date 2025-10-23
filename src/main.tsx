@@ -20,8 +20,9 @@ if (!rootElement.innerHTML) {
     const queryClient = new QueryClient();
 
     //Query configs:
-    const accessToken = localStorage.getItem('access_token');
+
     client.instance.interceptors.request.use((config) => {
+        const accessToken = localStorage.getItem('access_token');
         if (accessToken)
             config.headers.set('Authorization', `Bearer ${accessToken}`);
         return config;
