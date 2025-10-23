@@ -1,7 +1,6 @@
 import { UserIcon } from '@/assets/icons';
 import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
-import { refreshClient } from '@/services/client/client.gen';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronDown } from 'lucide-react';
@@ -27,7 +26,6 @@ export const UserAvatar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('access_token');
-        refreshClient();
         queryClient.removeQueries();
         navigate({ to: '/' });
     };

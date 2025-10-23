@@ -6,6 +6,7 @@ import {
     infiniteQueryOptions,
     queryOptions,
 } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 import { client } from '../client.gen';
 import {
@@ -50,7 +51,7 @@ import type {
 } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
-    Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
+    Pick<TOptions, 'baseURL' | 'body' | 'headers' | 'path' | 'query'> & {
         _id: string;
         _infinite?: boolean;
         tags?: ReadonlyArray<string>;
@@ -65,8 +66,8 @@ const createQueryKey = <TOptions extends Options>(
 ): [QueryKey<TOptions>[0]] => {
     const params: QueryKey<TOptions>[0] = {
         _id: id,
-        baseUrl:
-            options?.baseUrl || (options?.client ?? client).getConfig().baseUrl,
+        baseURL:
+            options?.baseURL || (options?.client ?? client).getConfig().baseURL,
     } as QueryKey<TOptions>[0];
     if (infinite) {
         params._infinite = infinite;
@@ -114,12 +115,12 @@ export const createEventMutation = (
     options?: Partial<Options<CreateEventData>>,
 ): UseMutationOptions<
     CreateEventResponse,
-    DefaultError,
+    AxiosError<DefaultError>,
     Options<CreateEventData>
 > => {
     const mutationOptions: UseMutationOptions<
         CreateEventResponse,
-        DefaultError,
+        AxiosError<DefaultError>,
         Options<CreateEventData>
     > = {
         mutationFn: async (fnOptions) => {
@@ -138,12 +139,12 @@ export const addTicketTypeToEventMutation = (
     options?: Partial<Options<AddTicketTypeToEventData>>,
 ): UseMutationOptions<
     AddTicketTypeToEventResponse,
-    DefaultError,
+    AxiosError<DefaultError>,
     Options<AddTicketTypeToEventData>
 > => {
     const mutationOptions: UseMutationOptions<
         AddTicketTypeToEventResponse,
-        DefaultError,
+        AxiosError<DefaultError>,
         Options<AddTicketTypeToEventData>
     > = {
         mutationFn: async (fnOptions) => {
@@ -162,12 +163,12 @@ export const checkInTicketMutation = (
     options?: Partial<Options<CheckInTicketData>>,
 ): UseMutationOptions<
     CheckInTicketResponse,
-    DefaultError,
+    AxiosError<DefaultError>,
     Options<CheckInTicketData>
 > => {
     const mutationOptions: UseMutationOptions<
         CheckInTicketResponse,
-        DefaultError,
+        AxiosError<DefaultError>,
         Options<CheckInTicketData>
     > = {
         mutationFn: async (fnOptions) => {
@@ -186,12 +187,12 @@ export const createOrderMutation = (
     options?: Partial<Options<CreateOrderData>>,
 ): UseMutationOptions<
     CreateOrderResponse,
-    DefaultError,
+    AxiosError<DefaultError>,
     Options<CreateOrderData>
 > => {
     const mutationOptions: UseMutationOptions<
         CreateOrderResponse,
-        DefaultError,
+        AxiosError<DefaultError>,
         Options<CreateOrderData>
     > = {
         mutationFn: async (fnOptions) => {
@@ -210,12 +211,12 @@ export const updateTicketTypeMutation = (
     options?: Partial<Options<UpdateTicketTypeData>>,
 ): UseMutationOptions<
     UpdateTicketTypeResponse,
-    DefaultError,
+    AxiosError<DefaultError>,
     Options<UpdateTicketTypeData>
 > => {
     const mutationOptions: UseMutationOptions<
         UpdateTicketTypeResponse,
-        DefaultError,
+        AxiosError<DefaultError>,
         Options<UpdateTicketTypeData>
     > = {
         mutationFn: async (fnOptions) => {
@@ -234,12 +235,12 @@ export const updateEventMutation = (
     options?: Partial<Options<UpdateEventData>>,
 ): UseMutationOptions<
     UpdateEventResponse,
-    DefaultError,
+    AxiosError<DefaultError>,
     Options<UpdateEventData>
 > => {
     const mutationOptions: UseMutationOptions<
         UpdateEventResponse,
-        DefaultError,
+        AxiosError<DefaultError>,
         Options<UpdateEventData>
     > = {
         mutationFn: async (fnOptions) => {
@@ -418,7 +419,7 @@ export const getAllEventsInfiniteOptions = (
 ) => {
     return infiniteQueryOptions<
         GetAllEventsResponse,
-        DefaultError,
+        AxiosError<DefaultError>,
         InfiniteData<GetAllEventsResponse>,
         QueryKey<Options<GetAllEventsData>>,
         | number
@@ -473,4 +474,3 @@ export const getEventByIdOptions = (options: Options<GetEventByIdData>) => {
         queryKey: getEventByIdQueryKey(options),
     });
 };
-export { client };

@@ -1,4 +1,4 @@
-import { client } from '@/services/client/@tanstack/react-query.gen';
+import { client } from '@/services/client/client.gen';
 import type { MeData } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 

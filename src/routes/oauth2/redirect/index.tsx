@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -11,21 +11,15 @@ function RouteComponent() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('access_token');
-
-        const timeout = setTimeout(() => {
-            if (token) navigate({ to: '/' });
-        }, 3000);
-
-        return () => clearTimeout(timeout);
-    }, []);
-
-    useEffect(() => {
         if (token) {
             localStorage.setItem('access_token', token);
         }
 
-        redirect({ to: '/' });
+        const timeout = setTimeout(() => {
+            if (token) navigate({ to: '/' });
+        }, 1000);
+
+        return () => clearTimeout(timeout);
     }, [token]);
 
     return (
