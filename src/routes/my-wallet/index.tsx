@@ -1,3 +1,4 @@
+import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { getTicketsOptions } from '@/services/client/@tanstack/react-query.gen';
 import type { Ticket } from '@/types';
@@ -23,6 +24,12 @@ function RouteComponent() {
     });
 
     const tickets = (response?.data as Ticket[]) ?? [];
+    const availableTickets = tickets.filter(
+        (ticket) => ticket.checkedIn === false,
+    );
+    const usedTickets = tickets.filter((ticket) => ticket.checkedIn === true);
+
+    const { data: meData } = useMe();
 
     useEffect(() => {
         console.log(response?.data);
@@ -47,12 +54,10 @@ function RouteComponent() {
                         )}
                     </div>
                     <div className="ms-5 flex w-full flex-col justify-center">
-                        <div className="grid grid-flow-col grid-rows-2 gap-4 py-5">
+                        <div className="grid grid-flow-col grid-rows-1 gap-4 py-5">
                             <p className="font-bold">Name: </p>
-                            <p className="font-bold">Description:</p>
-                            <p className="text-end font-medium">Khanh Tran</p>
                             <p className="text-end font-medium">
-                                An event enjoy-er
+                                {meData?.fullName}
                             </p>
                         </div>
 
@@ -99,7 +104,7 @@ function RouteComponent() {
                             : 'pointer-events-none size-0 origin-bottom opacity-0 ease-in',
                     )}
                 >
-                    {tickets.map((ticket) => (
+                    {availableTickets.map((ticket) => (
                         <>
                             <p className="text-xl font-medium">
                                 {ticket.eventName}
@@ -129,7 +134,7 @@ function RouteComponent() {
                 <div className="my-2 inline-flex items-center">
                     <p className="text-xl font-bold">Used Tickets:</p>
                     <p className="ms-auto max-w-1/2 truncate text-xl font-semibold group-hover:underline">
-                        5
+                        {usedTickets.length}
                     </p>
                 </div>
                 <div
@@ -140,16 +145,16 @@ function RouteComponent() {
                             : 'pointer-events-none size-0 origin-bottom opacity-0 ease-in',
                     )}
                 >
-                    <p className="truncate text-xl font-medium">[HN] NTPMM:</p>
-                    <p className="text-end text-xl font-medium">1</p>
-                    <p className="truncate text-xl font-medium">
-                        [HCM] GENFEST:
-                    </p>
-                    <p className="text-end text-xl font-medium">2</p>
-                    <p className="truncate text-xl font-medium">
-                        [DN] Nhun Nhay Sol7:
-                    </p>
-                    <p className="text-end text-xl font-medium">2</p>
+                    {usedTickets.map((ticket) => (
+                        <>
+                            <p className="text-xl font-medium">
+                                {ticket.eventName}
+                            </p>
+                            <p className="ms-auto text-end text-xl font-semibold">
+                                1
+                            </p>
+                        </>
+                    ))}
                 </div>
                 <button
                     className="my-2 self-center hover:text-gray"
