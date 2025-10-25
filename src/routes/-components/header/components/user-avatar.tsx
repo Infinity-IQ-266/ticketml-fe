@@ -1,6 +1,7 @@
 import { UserIcon } from '@/assets/icons';
 import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
+import type { MeData } from '@/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronDown } from 'lucide-react';
@@ -13,7 +14,8 @@ export const UserAvatar = () => {
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const { data: meData } = useMe();
+    const { data: rawMeData } = useMe();
+    const meData = rawMeData?.data as MeData;
 
     // const { data: orgResponse } = useQuery({
     //     ...getMyOrganizationsOptions(),

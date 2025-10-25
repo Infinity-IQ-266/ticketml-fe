@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/input-group';
 import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
+import type { MeData } from '@/types';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { SearchIcon, SlidersHorizontal } from 'lucide-react';
 
@@ -14,7 +15,8 @@ import { Cart, LoginButton, UserAvatar } from '.';
 
 export const HeaderDesktop = () => {
     const matchRoute = useMatchRoute();
-    const { data: meResponse } = useMe();
+    const { data: rawMeData } = useMe();
+    const meResponse = rawMeData?.data as MeData;
 
     return (
         <div className="inline-flex w-screen items-center border-b-2 border-black px-10 py-6 2xl:px-20">
