@@ -30,6 +30,7 @@ jobs:
               run: yarn build
               env:
                   VITE_API_URL: ${{ secrets.VITE_API_URL }}
+                  VITE_APP_PRODUCTION: true
                   VITE_ENV: 'production'
 
             # Copy build output to your VM via SCP
