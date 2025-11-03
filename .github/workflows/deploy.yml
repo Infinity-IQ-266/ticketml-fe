@@ -1,0 +1,55 @@
+name: Deploy Vite (Yarn) App to Linux VM
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            # Checkout repo
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            # Setup Node.js (adjust Node version to match your project)
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'yarn'
+
+            # Install dependencies with Yarn
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            # Build the project
+            - name: Build project
+              run: yarn build
+              env:
+                  VITE_API_URL: ${{ secrets.VITE_API_URL }}
+                  VITE_ENV: 'production'
+
+            # Copy build output to your VM via SCP
+            - name: Copy dist folder to server
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  source: 'dist/*'
+                  target: '/var/www/html/'
+                  strip_components: 1
+
+            # Restart Nginx (optional, but recommended)
+            - name: Restart Nginx
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: |
+                      sudo systemctl restart nginx
+                      echo "Frontend deployed successfully!"
