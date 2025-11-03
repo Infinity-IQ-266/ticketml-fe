@@ -3,6 +3,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
+import { BACKEND_URL } from './envs';
 import './index.css';
 import { routeTree } from './routeTree.gen';
 import { client } from './services/client/client.gen';
@@ -26,6 +27,10 @@ if (!rootElement.innerHTML) {
         if (accessToken)
             config.headers.set('Authorization', `Bearer ${accessToken}`);
         return config;
+    });
+
+    client.setConfig({
+        baseURL: BACKEND_URL,
     });
 
     const root = ReactDOM.createRoot(rootElement);
