@@ -27,7 +27,8 @@ jobs:
 
             # Build the project
             - name: Build project
-              run: echo "VITE_API_URL = $VITE_API_URL"
+              run: |
+                  echo "VITE_API_URL = $VITE_API_URL"
                   yarn build
               env:
                   VITE_API_URL: ${{ secrets.VITE_API_URL }}
