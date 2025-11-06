@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { jwtDecode } from 'jwt-decode';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -24,8 +25,15 @@ if (!rootElement.innerHTML) {
 
     client.instance.interceptors.request.use((config) => {
         const accessToken = localStorage.getItem('access_token');
-        if (accessToken)
+
+        if (accessToken) {
+            const { exp } = jwtDecode(accessToken);
+            const now = Date.now() / 1000;
+            if (exp && exp < now) {
+                localStorage.removeItem('access_token');
+            }
             config.headers.set('Authorization', `Bearer ${accessToken}`);
+        }
         return config;
     });
 

@@ -2,6 +2,8 @@ import {
     createOrderMutation,
     getEventByIdOptions,
 } from '@/services/client/@tanstack/react-query.gen';
+import type { OrderItemRequestDto } from '@/services/client/types.gen';
+import { useTicketStore } from '@/stores';
 import type { Event, Order } from '@/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -13,6 +15,7 @@ export const Route = createFileRoute('/event/$eventId/payment/confirm/')({
 
 function RouteComponent() {
     const { eventId } = Route.useParams();
+    const ticketStore = useTicketStore();
 
     const { data: response } = useQuery({
         ...getEventByIdOptions({
@@ -32,6 +35,24 @@ function RouteComponent() {
             window.location.href = paymentUrl;
         },
     });
+
+    const handlePaymentClick = () => {
+        createOrder.mutate({
+            body: {
+                items: ticketStore.selectedTickets
+                    .map((ticket) => {
+                        if (ticket.id) {
+                            return {
+                                ticketTypeId: ticket.id,
+                                quantity: ticket.quantity,
+                            };
+                        }
+                    })
+                    .filter(Boolean) as OrderItemRequestDto[],
+            },
+        });
+    };
+
     return (
         <div className="flex w-full gap-8 py-[80px] pr-[140px] pl-[192px]">
             {/* Left Column - Event Info & Form */}
@@ -192,22 +213,26 @@ function RouteComponent() {
                     <div className="space-y-4 p-6">
                         {/* Ticket Type */}
                         <div className="border-gray-200 border-b pb-4">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <h4 className="font-semibold text-black">
-                                        {event?.ticketTypes[0].type}
-                                    </h4>
-                                    <p className="text-gray-600 text-sm">
-                                        General Admission
-                                    </p>
+                            {ticketStore.selectedTickets.map((ticket) => (
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <h4 className="font-semibold text-black">
+                                            {ticket.type}
+                                        </h4>
+                                        <p className="text-gray-600 text-sm">
+                                            General Admission
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-semibold">
+                                            {ticket.quantity}
+                                        </p>
+                                        <p className="text-gray-600 text-sm">
+                                            {ticket.price} VND
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="text-right">
-                                    <p className="font-semibold">1x</p>
-                                    <p className="text-gray-600 text-sm">
-                                        {event?.ticketTypes[0].price} VND
-                                    </p>
-                                </div>
-                            </div>
+                            ))}
                         </div>
 
                         {/* Order Summary */}
@@ -241,20 +266,7 @@ function RouteComponent() {
                         {/* Continue Payment Button */}
                         <button
                             className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-green px-4 py-3 font-semibold text-white transition-colors hover:bg-green-darken"
-                            onClick={() => {
-                                createOrder.mutate({
-                                    body: {
-                                        items: [
-                                            {
-                                                ticketTypeId: event
-                                                    ?.ticketTypes[0]
-                                                    .id as unknown as number,
-                                                quantity: 1,
-                                            },
-                                        ],
-                                    },
-                                });
-                            }}
+                            onClick={handlePaymentClick}
                         >
                             <CreditCard className="h-5 w-5" />
                             Payment
