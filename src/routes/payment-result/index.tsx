@@ -11,7 +11,7 @@ function RouteComponent() {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            navigate({ to: '/my-wallet' });
+            navigate({ to: '/my-tickets' });
         }, 3000);
 
         return () => clearTimeout(timeout);

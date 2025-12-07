@@ -59,14 +59,14 @@ export const HeaderDesktop = () => {
                     </Link>
 
                     <Link
-                        to="/my-wallet"
+                        to="/my-tickets"
                         className={cn(
                             'text-xl font-medium text-nowrap transition duration-200 hover:underline',
-                            matchRoute({ to: '/my-wallet', fuzzy: false }) &&
+                            matchRoute({ to: '/my-tickets', fuzzy: false }) &&
                                 'font-semibold',
                         )}
                     >
-                        My Wallet
+                        My Tickets
                     </Link>
 
                     <Link

@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PaymentResultIndexRouteImport } from './routes/payment-result/index'
-import { Route as MyWalletIndexRouteImport } from './routes/my-wallet/index'
+import { Route as MyTicketsIndexRouteImport } from './routes/my-tickets/index'
 import { Route as Oauth2RedirectIndexRouteImport } from './routes/oauth2/redirect/index'
 import { Route as EventEventIdIndexRouteImport } from './routes/event/$eventId/index'
 import { Route as EventEventIdPaymentIndexRouteImport } from './routes/event/$eventId/payment/index'
@@ -33,9 +33,9 @@ const PaymentResultIndexRoute = PaymentResultIndexRouteImport.update({
   path: '/payment-result/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MyWalletIndexRoute = MyWalletIndexRouteImport.update({
-  id: '/my-wallet/',
-  path: '/my-wallet/',
+const MyTicketsIndexRoute = MyTicketsIndexRouteImport.update({
+  id: '/my-tickets/',
+  path: '/my-tickets/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Oauth2RedirectIndexRoute = Oauth2RedirectIndexRouteImport.update({
@@ -63,7 +63,7 @@ const EventEventIdPaymentConfirmIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/my-wallet': typeof MyWalletIndexRoute
+  '/my-tickets': typeof MyTicketsIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
   '/resources': typeof ResourcesIndexRoute
   '/event/$eventId': typeof EventEventIdIndexRoute
@@ -73,7 +73,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/my-wallet': typeof MyWalletIndexRoute
+  '/my-tickets': typeof MyTicketsIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
   '/resources': typeof ResourcesIndexRoute
   '/event/$eventId': typeof EventEventIdIndexRoute
@@ -84,7 +84,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/my-wallet/': typeof MyWalletIndexRoute
+  '/my-tickets/': typeof MyTicketsIndexRoute
   '/payment-result/': typeof PaymentResultIndexRoute
   '/resources/': typeof ResourcesIndexRoute
   '/event/$eventId/': typeof EventEventIdIndexRoute
@@ -96,7 +96,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/my-wallet'
+    | '/my-tickets'
     | '/payment-result'
     | '/resources'
     | '/event/$eventId'
@@ -106,7 +106,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/my-wallet'
+    | '/my-tickets'
     | '/payment-result'
     | '/resources'
     | '/event/$eventId'
@@ -116,7 +116,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/my-wallet/'
+    | '/my-tickets/'
     | '/payment-result/'
     | '/resources/'
     | '/event/$eventId/'
@@ -127,7 +127,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  MyWalletIndexRoute: typeof MyWalletIndexRoute
+  MyTicketsIndexRoute: typeof MyTicketsIndexRoute
   PaymentResultIndexRoute: typeof PaymentResultIndexRoute
   ResourcesIndexRoute: typeof ResourcesIndexRoute
   EventEventIdIndexRoute: typeof EventEventIdIndexRoute
@@ -159,11 +159,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentResultIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/my-wallet/': {
-      id: '/my-wallet/'
-      path: '/my-wallet'
-      fullPath: '/my-wallet'
-      preLoaderRoute: typeof MyWalletIndexRouteImport
+    '/my-tickets/': {
+      id: '/my-tickets/'
+      path: '/my-tickets'
+      fullPath: '/my-tickets'
+      preLoaderRoute: typeof MyTicketsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/oauth2/redirect/': {
@@ -199,7 +199,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  MyWalletIndexRoute: MyWalletIndexRoute,
+  MyTicketsIndexRoute: MyTicketsIndexRoute,
   PaymentResultIndexRoute: PaymentResultIndexRoute,
   ResourcesIndexRoute: ResourcesIndexRoute,
   EventEventIdIndexRoute: EventEventIdIndexRoute,

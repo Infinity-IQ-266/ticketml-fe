@@ -91,7 +91,7 @@ function RouteComponent() {
                                 Ticket receiving info
                             </h3>
                             <p className="text-sm text-gray">
-                                E-tickets will be displayed in "My Wallet"
+                                E-tickets will be displayed in "My Tickets"
                                 section of your account
                             </p>
                         </div>
