@@ -19,27 +19,27 @@ export const HeaderDesktop = () => {
     const meResponse = rawMeData?.data as MeData;
 
     return (
-        <div className="inline-flex w-screen items-center border-b-2 border-black px-10 py-6 2xl:px-20">
+        <div className="inline-flex w-screen items-center border-b-2 border-black bg-white px-10 py-6 shadow-sm 2xl:px-20">
             <Link
-                className="inline-flex items-center hover:cursor-pointer"
+                className="group inline-flex items-center transition-all duration-200 hover:cursor-pointer"
                 to="/"
             >
-                <LogoIcon className="w-20" />
+                <LogoIcon className="w-20 transition-transform duration-200 group-hover:scale-105" />
                 <p className="ms-3 text-4xl font-bold text-nowrap text-black">
                     Ticket ML
                 </p>
             </Link>
-            <InputGroup className="ms-8 h-12 max-w-72 min-w-52 rounded-md border border-black 2xl:ms-16">
+            <InputGroup className="ms-8 h-12 max-w-72 min-w-52 rounded-lg border-2 border-black shadow-sm transition-all duration-200 focus-within:border-primary focus-within:shadow-md 2xl:ms-16">
                 <InputGroupInput
-                    className="flex !text-2xl text-black placeholder-black/50! placeholder:text-2xl"
-                    placeholder="Search"
+                    className="flex text-base text-black placeholder:text-base placeholder:font-normal placeholder:text-gray"
+                    placeholder="Search events..."
                 />
                 <InputGroupAddon>
-                    <SearchIcon className="size-6 text-black" />
+                    <SearchIcon className="size-6 text-gray transition-colors duration-200 group-focus-within:text-primary" />
                 </InputGroupAddon>
 
                 <InputGroupAddon align="inline-end">
-                    <InputGroupButton className="h-full rounded-full hover:cursor-pointer hover:bg-black/10!">
+                    <InputGroupButton className="h-full rounded-lg transition-all duration-200 hover:cursor-pointer hover:bg-primary/20! active:scale-95">
                         <SlidersHorizontal className="size-6 text-black" />
                     </InputGroupButton>
                 </InputGroupAddon>
@@ -50,9 +50,10 @@ export const HeaderDesktop = () => {
                     <Link
                         to="/"
                         className={cn(
-                            'text-xl font-medium text-nowrap transition duration-200 hover:underline',
-                            matchRoute({ to: '/', fuzzy: true }) &&
-                                'font-semibold',
+                            'relative text-xl font-medium text-nowrap transition-all duration-200 hover:text-primary-darken',
+                            matchRoute({ to: '/', fuzzy: true })
+                                ? 'font-bold text-black after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-[""]'
+                                : 'text-gray',
                         )}
                     >
                         Events
@@ -61,9 +62,10 @@ export const HeaderDesktop = () => {
                     <Link
                         to="/my-tickets"
                         className={cn(
-                            'text-xl font-medium text-nowrap transition duration-200 hover:underline',
-                            matchRoute({ to: '/my-tickets', fuzzy: false }) &&
-                                'font-semibold',
+                            'relative text-xl font-medium text-nowrap transition-all duration-200 hover:text-primary-darken',
+                            matchRoute({ to: '/my-tickets', fuzzy: false })
+                                ? 'font-bold text-black after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-[""]'
+                                : 'text-gray',
                         )}
                     >
                         My Tickets
@@ -72,9 +74,10 @@ export const HeaderDesktop = () => {
                     <Link
                         to="/resources"
                         className={cn(
-                            'text-xl font-medium text-nowrap transition duration-200 hover:underline',
-                            matchRoute({ to: '/resources', fuzzy: true }) &&
-                                'font-semibold',
+                            'relative text-xl font-medium text-nowrap transition-all duration-200 hover:text-primary-darken',
+                            matchRoute({ to: '/resources', fuzzy: true })
+                                ? 'font-bold text-black after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-[""]'
+                                : 'text-gray',
                         )}
                     >
                         Resources
