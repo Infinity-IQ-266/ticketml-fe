@@ -4,4 +4,6 @@ export type Organization = {
     description?: string;
     address?: string;
     logoUrl?: string;
+    email?: string;
+    phoneNumber?: string;
 };

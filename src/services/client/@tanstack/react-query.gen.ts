@@ -15,6 +15,7 @@ import {
     checkInTicket,
     createEvent,
     createOrder,
+    createOrganization,
     getAllEvents,
     getCurrentUser,
     getEventById,
@@ -22,9 +23,13 @@ import {
     getMyOrderHistory,
     getMyOrganizations,
     getTickets,
+    handleChatMessage,
     handleVnpayIpn,
     updateEvent,
+    updateOrganization,
+    updateProfile,
     updateTicketType,
+    upload,
 } from '../sdk.gen';
 import type {
     AddTicketTypeToEventData,
@@ -35,6 +40,8 @@ import type {
     CreateEventResponse,
     CreateOrderData,
     CreateOrderResponse,
+    CreateOrganizationData,
+    CreateOrganizationResponse,
     GetAllEventsData,
     GetAllEventsResponse,
     GetCurrentUserData,
@@ -43,11 +50,19 @@ import type {
     GetMyOrderHistoryData,
     GetMyOrganizationsData,
     GetTicketsData,
+    HandleChatMessageData,
+    HandleChatMessageResponse,
     HandleVnpayIpnData,
     UpdateEventData,
     UpdateEventResponse,
+    UpdateOrganizationData,
+    UpdateOrganizationResponse,
+    UpdateProfileData,
+    UpdateProfileResponse,
     UpdateTicketTypeData,
     UpdateTicketTypeResponse,
+    UploadData,
+    UploadResponse,
 } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
@@ -88,6 +103,143 @@ const createQueryKey = <TOptions extends Options>(
         params.query = options.query;
     }
     return [params];
+};
+
+export const getCurrentUserQueryKey = (options?: Options<GetCurrentUserData>) =>
+    createQueryKey('getCurrentUser', options);
+
+export const getCurrentUserOptions = (
+    options?: Options<GetCurrentUserData>,
+) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getCurrentUser({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true,
+            });
+            return data;
+        },
+        queryKey: getCurrentUserQueryKey(options),
+    });
+};
+
+export const updateProfileMutation = (
+    options?: Partial<Options<UpdateProfileData>>,
+): UseMutationOptions<
+    UpdateProfileResponse,
+    AxiosError<DefaultError>,
+    Options<UpdateProfileData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        UpdateProfileResponse,
+        AxiosError<DefaultError>,
+        Options<UpdateProfileData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateProfile({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
+};
+
+export const updateOrganizationMutation = (
+    options?: Partial<Options<UpdateOrganizationData>>,
+): UseMutationOptions<
+    UpdateOrganizationResponse,
+    AxiosError<DefaultError>,
+    Options<UpdateOrganizationData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        UpdateOrganizationResponse,
+        AxiosError<DefaultError>,
+        Options<UpdateOrganizationData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateOrganization({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
+};
+
+export const uploadMutation = (
+    options?: Partial<Options<UploadData>>,
+): UseMutationOptions<
+    UploadResponse,
+    AxiosError<DefaultError>,
+    Options<UploadData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        UploadResponse,
+        AxiosError<DefaultError>,
+        Options<UploadData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await upload({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
+};
+
+export const getMyOrganizationsQueryKey = (
+    options?: Options<GetMyOrganizationsData>,
+) => createQueryKey('getMyOrganizations', options);
+
+export const getMyOrganizationsOptions = (
+    options?: Options<GetMyOrganizationsData>,
+) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getMyOrganizations({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true,
+            });
+            return data;
+        },
+        queryKey: getMyOrganizationsQueryKey(options),
+    });
+};
+
+export const createOrganizationMutation = (
+    options?: Partial<Options<CreateOrganizationData>>,
+): UseMutationOptions<
+    CreateOrganizationResponse,
+    AxiosError<DefaultError>,
+    Options<CreateOrganizationData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        CreateOrganizationResponse,
+        AxiosError<DefaultError>,
+        Options<CreateOrganizationData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createOrganization({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
 };
 
 export const getEventsByOrganizationQueryKey = (
@@ -207,6 +359,30 @@ export const createOrderMutation = (
     return mutationOptions;
 };
 
+export const handleChatMessageMutation = (
+    options?: Partial<Options<HandleChatMessageData>>,
+): UseMutationOptions<
+    HandleChatMessageResponse,
+    AxiosError<DefaultError>,
+    Options<HandleChatMessageData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        HandleChatMessageResponse,
+        AxiosError<DefaultError>,
+        Options<HandleChatMessageData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await handleChatMessage({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
+};
+
 export const updateTicketTypeMutation = (
     options?: Partial<Options<UpdateTicketTypeData>>,
 ): UseMutationOptions<
@@ -253,26 +429,6 @@ export const updateEventMutation = (
         },
     };
     return mutationOptions;
-};
-
-export const getCurrentUserQueryKey = (options?: Options<GetCurrentUserData>) =>
-    createQueryKey('getCurrentUser', options);
-
-export const getCurrentUserOptions = (
-    options?: Options<GetCurrentUserData>,
-) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getCurrentUser({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true,
-            });
-            return data;
-        },
-        queryKey: getCurrentUserQueryKey(options),
-    });
 };
 
 export const getTicketsQueryKey = (options?: Options<GetTicketsData>) =>
@@ -331,27 +487,6 @@ export const handleVnpayIpnOptions = (
             return data;
         },
         queryKey: handleVnpayIpnQueryKey(options),
-    });
-};
-
-export const getMyOrganizationsQueryKey = (
-    options?: Options<GetMyOrganizationsData>,
-) => createQueryKey('getMyOrganizations', options);
-
-export const getMyOrganizationsOptions = (
-    options?: Options<GetMyOrganizationsData>,
-) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getMyOrganizations({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true,
-            });
-            return data;
-        },
-        queryKey: getMyOrganizationsQueryKey(options),
     });
 };
 

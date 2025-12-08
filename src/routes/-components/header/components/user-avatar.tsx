@@ -1,8 +1,9 @@
 import { UserIcon } from '@/assets/icons';
 import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
-import type { MeData } from '@/types';
-import { useQueryClient } from '@tanstack/react-query';
+import { getMyOrganizationsOptions } from '@/services/client/@tanstack/react-query.gen';
+import type { MeData, Organization } from '@/types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { ChevronDown } from 'lucide-react';
 import { type RefObject, useRef, useState } from 'react';
@@ -17,10 +18,12 @@ export const UserAvatar = () => {
     const { data: rawMeData } = useMe();
     const meData = rawMeData?.data as MeData;
 
-    // const { data: orgResponse } = useQuery({
-    //     ...getMyOrganizationsOptions(),
-    //     staleTime: 60 * 60 * 1000,
-    // });
+    const { data: orgResponse } = useQuery({
+        ...getMyOrganizationsOptions(),
+        staleTime: 60 * 60 * 1000,
+    });
+
+    const myOrganizations = orgResponse?.data as Organization[];
 
     useOnClickOutside(ref as RefObject<HTMLDivElement>, () =>
         setIsShowingDropdown(false),
@@ -67,25 +70,24 @@ export const UserAvatar = () => {
                         : 'animate-dropdown-reverse pointer-events-none origin-bottom opacity-0 ease-in',
                 )}
             >
-                <button
-                    className="z-10 inline-flex w-full items-center justify-center px-4 py-3 text-xl font-medium text-nowrap transition-all duration-200 hover:cursor-pointer hover:bg-primary/10"
-                    type="button"
-                    onClick={() => console.log('Switch to Organizer account')}
-                >
-                    <p className="truncate text-xl font-bold text-gray">
-                        NTPMM Orgz
-                    </p>
-                </button>
-                <hr className="w-full border-t border-gray-light" />
-
-                <button
-                    className="z-10 inline-flex w-full items-center justify-center px-4 py-3 text-xl font-medium text-nowrap transition-all duration-200 hover:cursor-pointer hover:bg-primary/10"
-                    onClick={() => console.log('Login with Google OAuth')}
-                >
-                    <p className="truncate text-xl font-bold text-gray">
-                        GENFEST Orgz
-                    </p>
-                </button>
+                {myOrganizations &&
+                    myOrganizations.length > 0 &&
+                    myOrganizations.map((org) => (
+                        <>
+                            <button
+                                className="z-10 inline-flex w-full items-center justify-center px-4 py-3 text-xl font-medium text-nowrap transition-all duration-200 hover:cursor-pointer hover:bg-primary/10"
+                                type="button"
+                                onClick={() =>
+                                    console.log('Switch to Organizer account')
+                                }
+                            >
+                                <p className="truncate text-xl font-bold text-gray">
+                                    {org?.name}
+                                </p>
+                            </button>
+                            <hr className="w-full border-t border-gray-light" />
+                        </>
+                    ))}
 
                 <hr className="w-full border-t border-gray-light" />
 

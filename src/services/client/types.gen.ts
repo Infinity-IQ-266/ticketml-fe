@@ -4,20 +4,11 @@ export type ClientOptions = {
     baseURL: `${string}://src` | (string & {});
 };
 
-export type EventCreateRequestDto = {
-    title: string;
-    description?: string;
-    startDate: string;
-    endDate: string;
-    location: string;
-    ticketTypes: Array<TicketTypeRequestDto>;
-};
-
-export type TicketTypeRequestDto = {
-    type: string;
-    price?: number;
-    totalQuantity?: number;
-    ticketTypeStatus?: 'ACTIVE' | 'SOLD_OUT' | 'CANCELED';
+export type UserUpdateDto = {
+    fullName?: string;
+    phoneNumber?: string;
+    address?: string;
+    avatar?: Blob | File;
 };
 
 export type PagedResult = {
@@ -38,6 +29,31 @@ export type Response = {
     pagedResult?: PagedResult;
 };
 
+export type OrganizationRequestDto = {
+    name?: string;
+    description?: string;
+    email?: string;
+    phoneNumber?: string;
+    address?: string;
+    logo?: Blob | File;
+};
+
+export type EventCreateRequestDto = {
+    title: string;
+    description?: string;
+    startDate: string;
+    endDate: string;
+    location: string;
+    ticketTypes: Array<TicketTypeRequestDto>;
+};
+
+export type TicketTypeRequestDto = {
+    type: string;
+    price?: number;
+    totalQuantity?: number;
+    ticketTypeStatus?: 'ACTIVE' | 'SOLD_OUT' | 'CANCELED';
+};
+
 export type CheckInRequestDto = {
     qrCode: string;
 };
@@ -48,7 +64,14 @@ export type OrderItemRequestDto = {
 };
 
 export type OrderRequestDto = {
+    fullName?: string;
+    email?: string;
+    phoneNumber?: string;
     items: Array<OrderItemRequestDto>;
+};
+
+export type ChatRequestDto = {
+    message: string;
 };
 
 export type EventUpdateRequestDto = {
@@ -58,6 +81,111 @@ export type EventUpdateRequestDto = {
     startDate?: string;
     endDate?: string;
 };
+
+export type GetCurrentUserData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/users/me';
+};
+
+export type GetCurrentUserResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type GetCurrentUserResponse =
+    GetCurrentUserResponses[keyof GetCurrentUserResponses];
+
+export type UpdateProfileData = {
+    body?: UserUpdateDto;
+    path?: never;
+    query?: never;
+    url: '/api/v1/users/me';
+};
+
+export type UpdateProfileResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type UpdateProfileResponse =
+    UpdateProfileResponses[keyof UpdateProfileResponses];
+
+export type UpdateOrganizationData = {
+    body?: OrganizationRequestDto;
+    path: {
+        orgId: number;
+    };
+    query?: never;
+    url: '/api/v1/organizer/organizations/{orgId}';
+};
+
+export type UpdateOrganizationResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type UpdateOrganizationResponse =
+    UpdateOrganizationResponses[keyof UpdateOrganizationResponses];
+
+export type UploadData = {
+    body?: {
+        file: Blob | File;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/upload';
+};
+
+export type UploadResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type UploadResponse = UploadResponses[keyof UploadResponses];
+
+export type GetMyOrganizationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/organizer/organizations';
+};
+
+export type GetMyOrganizationsResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type GetMyOrganizationsResponse =
+    GetMyOrganizationsResponses[keyof GetMyOrganizationsResponses];
+
+export type CreateOrganizationData = {
+    body?: OrganizationRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/v1/organizer/organizations';
+};
+
+export type CreateOrganizationResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type CreateOrganizationResponse =
+    CreateOrganizationResponses[keyof CreateOrganizationResponses];
 
 export type GetEventsByOrganizationData = {
     body?: never;
@@ -152,6 +280,23 @@ export type CreateOrderResponses = {
 export type CreateOrderResponse =
     CreateOrderResponses[keyof CreateOrderResponses];
 
+export type HandleChatMessageData = {
+    body: ChatRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/v1/chat';
+};
+
+export type HandleChatMessageResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type HandleChatMessageResponse =
+    HandleChatMessageResponses[keyof HandleChatMessageResponses];
+
 export type UpdateTicketTypeData = {
     body: TicketTypeRequestDto;
     path: {
@@ -189,23 +334,6 @@ export type UpdateEventResponses = {
 
 export type UpdateEventResponse =
     UpdateEventResponses[keyof UpdateEventResponses];
-
-export type GetCurrentUserData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/users/me';
-};
-
-export type GetCurrentUserResponses = {
-    /**
-     * OK
-     */
-    200: Response;
-};
-
-export type GetCurrentUserResponse =
-    GetCurrentUserResponses[keyof GetCurrentUserResponses];
 
 export type GetTicketsData = {
     body?: never;
@@ -258,23 +386,6 @@ export type HandleVnpayIpnResponses = {
 
 export type HandleVnpayIpnResponse =
     HandleVnpayIpnResponses[keyof HandleVnpayIpnResponses];
-
-export type GetMyOrganizationsData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/organizer/organizations';
-};
-
-export type GetMyOrganizationsResponses = {
-    /**
-     * OK
-     */
-    200: Response;
-};
-
-export type GetMyOrganizationsResponse =
-    GetMyOrganizationsResponses[keyof GetMyOrganizationsResponses];
 
 export type GetAllEventsData = {
     body?: never;

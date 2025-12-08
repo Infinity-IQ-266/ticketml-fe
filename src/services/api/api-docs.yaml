@@ -3,6 +3,109 @@ info:
     title: OpenAPI definition
     version: v0
 paths:
+    /api/v1/users/me:
+        get:
+            tags:
+                - user-controller
+            operationId: getCurrentUser
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+        put:
+            tags:
+                - user-controller
+            operationId: updateProfile
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: '#/components/schemas/UserUpdateDTO'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/organizer/organizations/{orgId}:
+        put:
+            tags:
+                - organizer-controller
+            operationId: updateOrganization
+            parameters:
+                - name: orgId
+                  in: path
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: '#/components/schemas/OrganizationRequestDTO'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/upload:
+        post:
+            tags:
+                - s-3-controller
+            operationId: upload
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+                            required:
+                                - file
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+    /api/v1/organizer/organizations:
+        get:
+            tags:
+                - organizer-controller
+            operationId: getMyOrganizations
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
+        post:
+            tags:
+                - organizer-controller
+            operationId: createOrganization
+            requestBody:
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: '#/components/schemas/OrganizationRequestDTO'
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
     /api/v1/organizer/organizations/{orgId}/events:
         get:
             tags:
@@ -114,6 +217,24 @@ paths:
                         '*/*':
                             schema:
                                 $ref: '#/components/schemas/Response'
+    /api/v1/chat:
+        post:
+            tags:
+                - chat-controller
+            operationId: handleChatMessage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ChatRequestDTO'
+                required: true
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: '#/components/schemas/Response'
     /api/v1/organizer/ticketTypes/{ticketTypeId}:
         patch:
             tags:
@@ -164,18 +285,6 @@ paths:
                         '*/*':
                             schema:
                                 $ref: '#/components/schemas/Response'
-    /api/v1/users/me:
-        get:
-            tags:
-                - user-controller
-            operationId: getCurrentUser
-            responses:
-                '200':
-                    description: OK
-                    content:
-                        '*/*':
-                            schema:
-                                $ref: '#/components/schemas/Response'
     /api/v1/users/me/tickets:
         get:
             tags:
@@ -216,18 +325,6 @@ paths:
             tags:
                 - payment-controller
             operationId: handleVnpayIPN
-            responses:
-                '200':
-                    description: OK
-                    content:
-                        '*/*':
-                            schema:
-                                $ref: '#/components/schemas/Response'
-    /api/v1/organizer/organizations:
-        get:
-            tags:
-                - organizer-controller
-            operationId: getMyOrganizations
             responses:
                 '200':
                     description: OK
@@ -320,54 +417,18 @@ paths:
                                 $ref: '#/components/schemas/Response'
 components:
     schemas:
-        EventCreateRequestDTO:
+        UserUpdateDTO:
             type: object
             properties:
-                title:
+                fullName:
                     type: string
-                    minLength: 1
-                description:
+                phoneNumber:
                     type: string
-                startDate:
+                address:
                     type: string
-                    format: date-time
-                endDate:
+                avatar:
                     type: string
-                    format: date-time
-                location:
-                    type: string
-                    minLength: 1
-                ticketTypes:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/TicketTypeRequestDTO'
-                    minItems: 1
-            required:
-                - endDate
-                - location
-                - startDate
-                - ticketTypes
-                - title
-        TicketTypeRequestDTO:
-            type: object
-            properties:
-                type:
-                    type: string
-                    minLength: 1
-                price:
-                    type: number
-                    format: double
-                totalQuantity:
-                    type: integer
-                    format: int32
-                ticketTypeStatus:
-                    type: string
-                    enum:
-                        - ACTIVE
-                        - SOLD_OUT
-                        - CANCELED
-            required:
-                - type
+                    format: binary
         PagedResult:
             type: object
             properties:
@@ -403,6 +464,70 @@ components:
                 data: {}
                 pagedResult:
                     $ref: '#/components/schemas/PagedResult'
+        OrganizationRequestDTO:
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                email:
+                    type: string
+                phoneNumber:
+                    type: string
+                address:
+                    type: string
+                logo:
+                    type: string
+                    format: binary
+        EventCreateRequestDTO:
+            type: object
+            properties:
+                title:
+                    type: string
+                    minLength: 1
+                description:
+                    type: string
+                startDate:
+                    type: string
+                    format: date
+                endDate:
+                    type: string
+                    format: date
+                location:
+                    type: string
+                    minLength: 1
+                ticketTypes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/TicketTypeRequestDTO'
+                    minItems: 1
+            required:
+                - endDate
+                - location
+                - startDate
+                - ticketTypes
+                - title
+        TicketTypeRequestDTO:
+            type: object
+            properties:
+                type:
+                    type: string
+                    minLength: 1
+                price:
+                    type: number
+                    format: double
+                totalQuantity:
+                    type: integer
+                    format: int32
+                ticketTypeStatus:
+                    type: string
+                    enum:
+                        - ACTIVE
+                        - SOLD_OUT
+                        - CANCELED
+            required:
+                - type
         CheckInRequestDTO:
             type: object
             properties:
@@ -426,6 +551,12 @@ components:
         OrderRequestDTO:
             type: object
             properties:
+                fullName:
+                    type: string
+                email:
+                    type: string
+                phoneNumber:
+                    type: string
                 items:
                     type: array
                     items:
@@ -433,6 +564,14 @@ components:
                     minItems: 1
             required:
                 - items
+        ChatRequestDTO:
+            type: object
+            properties:
+                message:
+                    type: string
+                    minLength: 1
+            required:
+                - message
         EventUpdateRequestDTO:
             type: object
             properties:

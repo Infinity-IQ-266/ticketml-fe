@@ -9,15 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OrganizerRouteRouteImport } from './routes/organizer/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PaymentResultIndexRouteImport } from './routes/payment-result/index'
+import { Route as OrganizerIndexRouteImport } from './routes/organizer/index'
 import { Route as MyTicketsIndexRouteImport } from './routes/my-tickets/index'
+import { Route as OrganizerCheckInIndexRouteImport } from './routes/organizer/check-in/index'
 import { Route as Oauth2RedirectIndexRouteImport } from './routes/oauth2/redirect/index'
 import { Route as EventEventIdIndexRouteImport } from './routes/event/$eventId/index'
 import { Route as EventEventIdPaymentIndexRouteImport } from './routes/event/$eventId/payment/index'
 import { Route as EventEventIdPaymentConfirmIndexRouteImport } from './routes/event/$eventId/payment/confirm/index'
 
+const OrganizerRouteRoute = OrganizerRouteRouteImport.update({
+  id: '/organizer',
+  path: '/organizer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -33,10 +41,20 @@ const PaymentResultIndexRoute = PaymentResultIndexRouteImport.update({
   path: '/payment-result/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrganizerIndexRoute = OrganizerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrganizerRouteRoute,
+} as any)
 const MyTicketsIndexRoute = MyTicketsIndexRouteImport.update({
   id: '/my-tickets/',
   path: '/my-tickets/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizerCheckInIndexRoute = OrganizerCheckInIndexRouteImport.update({
+  id: '/check-in/',
+  path: '/check-in/',
+  getParentRoute: () => OrganizerRouteRoute,
 } as any)
 const Oauth2RedirectIndexRoute = Oauth2RedirectIndexRouteImport.update({
   id: '/oauth2/redirect/',
@@ -63,32 +81,40 @@ const EventEventIdPaymentConfirmIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/organizer': typeof OrganizerRouteRouteWithChildren
   '/my-tickets': typeof MyTicketsIndexRoute
+  '/organizer/': typeof OrganizerIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
   '/resources': typeof ResourcesIndexRoute
   '/event/$eventId': typeof EventEventIdIndexRoute
   '/oauth2/redirect': typeof Oauth2RedirectIndexRoute
+  '/organizer/check-in': typeof OrganizerCheckInIndexRoute
   '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute
   '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/my-tickets': typeof MyTicketsIndexRoute
+  '/organizer': typeof OrganizerIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
   '/resources': typeof ResourcesIndexRoute
   '/event/$eventId': typeof EventEventIdIndexRoute
   '/oauth2/redirect': typeof Oauth2RedirectIndexRoute
+  '/organizer/check-in': typeof OrganizerCheckInIndexRoute
   '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute
   '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/organizer': typeof OrganizerRouteRouteWithChildren
   '/my-tickets/': typeof MyTicketsIndexRoute
+  '/organizer/': typeof OrganizerIndexRoute
   '/payment-result/': typeof PaymentResultIndexRoute
   '/resources/': typeof ResourcesIndexRoute
   '/event/$eventId/': typeof EventEventIdIndexRoute
   '/oauth2/redirect/': typeof Oauth2RedirectIndexRoute
+  '/organizer/check-in/': typeof OrganizerCheckInIndexRoute
   '/event/$eventId/payment/': typeof EventEventIdPaymentIndexRoute
   '/event/$eventId/payment/confirm/': typeof EventEventIdPaymentConfirmIndexRoute
 }
@@ -96,37 +122,46 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/organizer'
     | '/my-tickets'
+    | '/organizer/'
     | '/payment-result'
     | '/resources'
     | '/event/$eventId'
     | '/oauth2/redirect'
+    | '/organizer/check-in'
     | '/event/$eventId/payment'
     | '/event/$eventId/payment/confirm'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/my-tickets'
+    | '/organizer'
     | '/payment-result'
     | '/resources'
     | '/event/$eventId'
     | '/oauth2/redirect'
+    | '/organizer/check-in'
     | '/event/$eventId/payment'
     | '/event/$eventId/payment/confirm'
   id:
     | '__root__'
     | '/'
+    | '/organizer'
     | '/my-tickets/'
+    | '/organizer/'
     | '/payment-result/'
     | '/resources/'
     | '/event/$eventId/'
     | '/oauth2/redirect/'
+    | '/organizer/check-in/'
     | '/event/$eventId/payment/'
     | '/event/$eventId/payment/confirm/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  OrganizerRouteRoute: typeof OrganizerRouteRouteWithChildren
   MyTicketsIndexRoute: typeof MyTicketsIndexRoute
   PaymentResultIndexRoute: typeof PaymentResultIndexRoute
   ResourcesIndexRoute: typeof ResourcesIndexRoute
@@ -138,6 +173,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/organizer': {
+      id: '/organizer'
+      path: '/organizer'
+      fullPath: '/organizer'
+      preLoaderRoute: typeof OrganizerRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -159,12 +201,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentResultIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/organizer/': {
+      id: '/organizer/'
+      path: '/'
+      fullPath: '/organizer/'
+      preLoaderRoute: typeof OrganizerIndexRouteImport
+      parentRoute: typeof OrganizerRouteRoute
+    }
     '/my-tickets/': {
       id: '/my-tickets/'
       path: '/my-tickets'
       fullPath: '/my-tickets'
       preLoaderRoute: typeof MyTicketsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/organizer/check-in/': {
+      id: '/organizer/check-in/'
+      path: '/check-in'
+      fullPath: '/organizer/check-in'
+      preLoaderRoute: typeof OrganizerCheckInIndexRouteImport
+      parentRoute: typeof OrganizerRouteRoute
     }
     '/oauth2/redirect/': {
       id: '/oauth2/redirect/'
@@ -197,8 +253,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface OrganizerRouteRouteChildren {
+  OrganizerIndexRoute: typeof OrganizerIndexRoute
+  OrganizerCheckInIndexRoute: typeof OrganizerCheckInIndexRoute
+}
+
+const OrganizerRouteRouteChildren: OrganizerRouteRouteChildren = {
+  OrganizerIndexRoute: OrganizerIndexRoute,
+  OrganizerCheckInIndexRoute: OrganizerCheckInIndexRoute,
+}
+
+const OrganizerRouteRouteWithChildren = OrganizerRouteRoute._addFileChildren(
+  OrganizerRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  OrganizerRouteRoute: OrganizerRouteRouteWithChildren,
   MyTicketsIndexRoute: MyTicketsIndexRoute,
   PaymentResultIndexRoute: PaymentResultIndexRoute,
   ResourcesIndexRoute: ResourcesIndexRoute,
