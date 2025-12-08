@@ -24,7 +24,7 @@ export const HeaderDesktop = () => {
             </Link>
 
             <div className="inline-flex w-full grow items-center justify-end">
-                <div className="inline-flex w-full max-w-96 justify-around px-8">
+                <div className="inline-flex w-full max-w-[500px] justify-around px-8">
                     <Link
                         to="/"
                         className={cn(
@@ -47,6 +47,18 @@ export const HeaderDesktop = () => {
                         )}
                     >
                         My Tickets
+                    </Link>
+
+                    <Link
+                        to="/host"
+                        className={cn(
+                            'relative text-xl font-medium text-nowrap transition-all duration-200 hover:text-primary-darken',
+                            matchRoute({ to: '/host', fuzzy: false })
+                                ? 'font-bold text-black after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-[""]'
+                                : 'text-gray',
+                        )}
+                    >
+                        Host
                     </Link>
                 </div>
                 <div className="inline-flex items-center gap-8">

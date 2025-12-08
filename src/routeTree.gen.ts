@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PaymentResultIndexRouteImport } from './routes/payment-result/index'
 import { Route as OrganizerIndexRouteImport } from './routes/organizer/index'
 import { Route as MyTicketsIndexRouteImport } from './routes/my-tickets/index'
+import { Route as HostIndexRouteImport } from './routes/host/index'
 import { Route as OrganizerCheckInIndexRouteImport } from './routes/organizer/check-in/index'
 import { Route as OrganizerOrgIdIndexRouteImport } from './routes/organizer/$orgId/index'
 import { Route as Oauth2RedirectIndexRouteImport } from './routes/oauth2/redirect/index'
@@ -46,6 +47,11 @@ const OrganizerIndexRoute = OrganizerIndexRouteImport.update({
 const MyTicketsIndexRoute = MyTicketsIndexRouteImport.update({
   id: '/my-tickets/',
   path: '/my-tickets/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HostIndexRoute = HostIndexRouteImport.update({
+  id: '/host/',
+  path: '/host/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrganizerCheckInIndexRoute = OrganizerCheckInIndexRouteImport.update({
@@ -96,6 +102,7 @@ const OrganizerOrgIdEventEventIdCheckInIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/organizer': typeof OrganizerRouteRouteWithChildren
+  '/host': typeof HostIndexRoute
   '/my-tickets': typeof MyTicketsIndexRoute
   '/organizer/': typeof OrganizerIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/host': typeof HostIndexRoute
   '/my-tickets': typeof MyTicketsIndexRoute
   '/organizer': typeof OrganizerIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/organizer': typeof OrganizerRouteRouteWithChildren
+  '/host/': typeof HostIndexRoute
   '/my-tickets/': typeof MyTicketsIndexRoute
   '/organizer/': typeof OrganizerIndexRoute
   '/payment-result/': typeof PaymentResultIndexRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/organizer'
+    | '/host'
     | '/my-tickets'
     | '/organizer/'
     | '/payment-result'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/host'
     | '/my-tickets'
     | '/organizer'
     | '/payment-result'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/organizer'
+    | '/host/'
     | '/my-tickets/'
     | '/organizer/'
     | '/payment-result/'
@@ -188,6 +200,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OrganizerRouteRoute: typeof OrganizerRouteRouteWithChildren
+  HostIndexRoute: typeof HostIndexRoute
   MyTicketsIndexRoute: typeof MyTicketsIndexRoute
   PaymentResultIndexRoute: typeof PaymentResultIndexRoute
   EventEventIdIndexRoute: typeof EventEventIdIndexRoute
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       path: '/my-tickets'
       fullPath: '/my-tickets'
       preLoaderRoute: typeof MyTicketsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/host/': {
+      id: '/host/'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof HostIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/organizer/check-in/': {
@@ -316,6 +336,7 @@ const OrganizerRouteRouteWithChildren = OrganizerRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OrganizerRouteRoute: OrganizerRouteRouteWithChildren,
+  HostIndexRoute: HostIndexRoute,
   MyTicketsIndexRoute: MyTicketsIndexRoute,
   PaymentResultIndexRoute: PaymentResultIndexRoute,
   EventEventIdIndexRoute: EventEventIdIndexRoute,

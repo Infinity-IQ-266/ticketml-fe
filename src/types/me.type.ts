@@ -3,4 +3,6 @@ export type MeData = {
     email: string;
     imageUrl: string | null;
     phoneNumber: string | null;
+    address: string | null;
+    role?: 'USER' | 'ADMIN';
 };

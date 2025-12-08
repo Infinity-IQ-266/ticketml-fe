@@ -154,6 +154,24 @@ export const Menu = ({ open, onOpenChange }: MenuProps) => {
                                     <span className="flex-1">My Tickets</span>
                                     <ChevronRight className="size-5 opacity-50 transition-transform group-hover:translate-x-0.5" />
                                 </Link>
+
+                                <Link
+                                    to="/host"
+                                    onClick={closeMenu}
+                                    className={cn(
+                                        'group flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 md:text-lg',
+                                        matchRoute({
+                                            to: '/host',
+                                            fuzzy: false,
+                                        })
+                                            ? 'bg-primary/10 text-black shadow-sm'
+                                            : 'text-gray hover:bg-gray-light/50 hover:text-black',
+                                    )}
+                                >
+                                    <Building2 className="size-5 shrink-0" />
+                                    <span className="flex-1">Host</span>
+                                    <ChevronRight className="size-5 opacity-50 transition-transform group-hover:translate-x-0.5" />
+                                </Link>
                             </nav>
                         </div>
 

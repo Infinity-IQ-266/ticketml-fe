@@ -6,4 +6,5 @@ export type Organization = {
     logoUrl?: string;
     email?: string;
     phoneNumber?: string;
+    status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
 };
