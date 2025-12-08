@@ -40,7 +40,7 @@ export const UserAvatar = () => {
     };
     return (
         <div
-            className="relative w-fit rounded-full border border-gray-light bg-white shadow-sm"
+            className="relative z-50 w-fit rounded-full border border-gray-light bg-white shadow-sm"
             ref={ref}
         >
             <button
@@ -68,7 +68,7 @@ export const UserAvatar = () => {
             </button>
             <div
                 className={cn(
-                    'absolute top-full left-0 mt-3 flex w-full transform flex-col items-center overflow-hidden rounded-xl border border-gray-light bg-white text-xl font-medium text-nowrap shadow-xl transition-all duration-300',
+                    'absolute top-full left-0 z-[60] mt-3 flex min-w-max transform flex-col items-center overflow-hidden rounded-xl border border-gray-light bg-white text-xl font-medium text-nowrap shadow-xl transition-all duration-300',
                     isShowingDropdown
                         ? 'animate-dropdown origin-top opacity-100 ease-out'
                         : 'animate-dropdown-reverse pointer-events-none origin-bottom opacity-0 ease-in',

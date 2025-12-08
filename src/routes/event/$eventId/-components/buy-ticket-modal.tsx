@@ -93,10 +93,17 @@ export const BuyTicketModal = ({
     };
 
     return (
-        <div className="p-6">
-            <h2 className="mb-4 text-2xl font-bold">Buy Tickets</h2>
+        <div className="p-6 md:p-8">
+            <div className="mb-6 border-b border-gray-light pb-4">
+                <h2 className="text-2xl font-bold text-black md:text-3xl">
+                    Buy Tickets
+                </h2>
+                <p className="mt-1 text-sm text-gray">
+                    Select the number of tickets you want to purchase (max 10)
+                </p>
+            </div>
             <div className="space-y-6">
-                <FieldGroup>
+                <FieldGroup className="space-y-4">
                     {ticketTypes.map((ticket) => (
                         <form.Field
                             key={ticket.id}
@@ -114,27 +121,30 @@ export const BuyTicketModal = ({
 
                                 return (
                                     <Field>
-                                        <div className="flex items-center justify-between rounded-lg p-2">
+                                        <div className="flex items-center justify-between rounded-xl border border-gray-light bg-gradient-to-br from-white to-gray-light/20 p-4 transition-all duration-200 hover:border-primary/50 hover:shadow-md">
                                             <div className="flex-1">
-                                                <FieldLabel className="text-base font-semibold">
+                                                <FieldLabel className="text-lg font-bold text-black">
                                                     {ticket.type}
                                                 </FieldLabel>
-                                                <p className="text-sm text-muted-foreground">
-                                                    ${ticket.price.toFixed(2)}
+                                                <p className="text-base font-semibold text-primary">
+                                                    {ticket.price.toLocaleString(
+                                                        'vi-VN',
+                                                    )}{' '}
+                                                    đ
                                                 </p>
-                                                <p className="mt-1 text-xs text-muted-foreground">
+                                                <p className="mt-1 text-sm text-gray">
                                                     {isSoldOut
-                                                        ? 'Sold Out'
-                                                        : `${ticket.remainingQuantity} remaining`}
+                                                        ? '🔴 Sold Out'
+                                                        : `✓ ${ticket.remainingQuantity} tickets available`}
                                                 </p>
                                             </div>
 
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-3">
                                                 <Button
                                                     type="button"
                                                     variant="outline"
                                                     size="sm"
-                                                    className="h-8 w-8 p-0"
+                                                    className="size-10 rounded-lg border-2 p-0 transition-all hover:scale-105 hover:border-primary active:scale-95"
                                                     onClick={() => {
                                                         if (canDecrease) {
                                                             field.handleChange(
@@ -147,7 +157,7 @@ export const BuyTicketModal = ({
                                                         isSoldOut
                                                     }
                                                 >
-                                                    <Minus className="h-4 w-4" />
+                                                    <Minus className="size-5" />
                                                 </Button>
 
                                                 <Input
@@ -174,7 +184,7 @@ export const BuyTicketModal = ({
                                                         }
                                                     }}
                                                     disabled={isSoldOut}
-                                                    className="w-16 text-center"
+                                                    className="w-20 border-2 text-center text-lg font-bold"
                                                     min="0"
                                                     max={Math.min(
                                                         ticket.remainingQuantity,
@@ -186,7 +196,7 @@ export const BuyTicketModal = ({
                                                     type="button"
                                                     variant="outline"
                                                     size="sm"
-                                                    className="h-8 w-8 p-0"
+                                                    className="size-10 rounded-lg border-2 p-0 transition-all hover:scale-105 hover:border-primary active:scale-95"
                                                     onClick={() => {
                                                         if (canIncrease) {
                                                             field.handleChange(
@@ -199,7 +209,7 @@ export const BuyTicketModal = ({
                                                         isSoldOut
                                                     }
                                                 >
-                                                    <Plus className="h-4 w-4" />
+                                                    <Plus className="size-5" />
                                                 </Button>
                                             </div>
                                         </div>
@@ -210,16 +220,22 @@ export const BuyTicketModal = ({
                     ))}
                 </FieldGroup>
 
-                <div className="border-t pt-4">
-                    <div className="mb-2 flex justify-between text-sm">
-                        <span>Total Tickets:</span>
-                        <span className="font-semibold">
+                <div className="rounded-xl border-2 border-gray-light bg-gradient-to-br from-primary/5 to-secondary/5 p-5">
+                    <div className="mb-3 flex items-center justify-between text-base">
+                        <span className="font-medium text-gray">
+                            Total Tickets:
+                        </span>
+                        <span className="text-lg font-bold text-black">
                             {totalTickets} / 10
                         </span>
                     </div>
-                    <div className="flex justify-between text-lg font-bold">
-                        <span>Total Price:</span>
-                        <span>{totalPrice.toLocaleString('de-DE')} VND</span>
+                    <div className="flex items-center justify-between border-t border-gray-light pt-3">
+                        <span className="text-lg font-semibold text-black">
+                            Total Price:
+                        </span>
+                        <span className="text-2xl font-bold text-primary">
+                            {totalPrice.toLocaleString('vi-VN')} đ
+                        </span>
                     </div>
                     {totalTickets > 10 && (
                         <FieldError
@@ -230,11 +246,12 @@ export const BuyTicketModal = ({
                     )}
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     <Button
                         type="button"
                         variant="outline"
                         onClick={() => form.reset()}
+                        className="border-2 px-6 transition-all hover:scale-105 active:scale-95"
                     >
                         Reset
                     </Button>
@@ -242,11 +259,11 @@ export const BuyTicketModal = ({
                         type="button"
                         onClick={handleSubmit}
                         disabled={totalTickets === 0 || totalTickets > 10}
-                        className="flex-1"
+                        className="flex-1 bg-primary px-6 text-lg font-bold text-black transition-all hover:scale-105 hover:bg-primary-darken active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         Buy {totalTickets} Ticket
                         {totalTickets !== 1 ? 's' : ''} -{' '}
-                        {totalPrice.toLocaleString('de-DE')} VND
+                        {totalPrice.toLocaleString('vi-VN')} đ
                     </Button>
                 </div>
             </div>

@@ -13,8 +13,8 @@
     --color-gray-light: #d9d9d9;
     --color-white: #ffffff;
     --color-red: #ff5959;
-    --color-green: #22c55e;  
-    --color-green-darken: #16a34a; 
+    --color-green: #22c55e;
+    --color-green-darken: #16a34a;
     --color-blue: #3b82f6;
 
     --font-sans:
@@ -120,11 +120,26 @@
         }
     }
 
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .animate-dropdown {
         animation: dropdown 0.25s ease-out forwards;
     }
 
     .animate-dropdown-reverse {
         animation: dropdown-reverse 0.2s ease-in forwards;
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
     }
 }

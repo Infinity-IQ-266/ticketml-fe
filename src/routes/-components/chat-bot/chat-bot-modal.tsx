@@ -3,6 +3,8 @@ import { handleChatMessageMutation } from '@/services/client/@tanstack/react-que
 import { useMutation } from '@tanstack/react-query';
 import { Bot, Send, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatBotModalProps {
     open: boolean;
@@ -136,12 +138,12 @@ export const ChatBotModal = ({ open, onOpenChange }: ChatBotModalProps) => {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 space-y-4 overflow-y-auto bg-gray-light/20 p-4">
+            <div className="flex-1 space-y-4 overflow-y-auto bg-gradient-to-b from-gray-light/10 to-gray-light/30 p-4">
                 {messages.map((message) => (
                     <div
                         key={message.id}
                         className={cn(
-                            'flex',
+                            'animate-fadeIn flex',
                             message.sender === 'user'
                                 ? 'justify-end'
                                 : 'justify-start',
@@ -149,18 +151,26 @@ export const ChatBotModal = ({ open, onOpenChange }: ChatBotModalProps) => {
                     >
                         <div
                             className={cn(
-                                'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm',
+                                'group max-w-[85%] rounded-2xl px-4 py-3 text-sm transition-all duration-200 hover:shadow-lg',
                                 message.sender === 'user'
-                                    ? 'bg-primary text-black'
-                                    : 'border border-gray-light bg-white text-black shadow-sm',
+                                    ? 'bg-gradient-to-br from-primary to-primary/80 text-black shadow-md'
+                                    : 'border-2 border-gray-light bg-white text-black shadow-md',
                             )}
                         >
-                            <p className="break-words whitespace-pre-wrap">
-                                {message.text}
-                            </p>
+                            {message.sender === 'bot' ? (
+                                <div className="prose prose-sm prose-headings:font-bold prose-headings:text-black prose-p:text-black prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-black prose-code:rounded prose-code:bg-gray-light/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-black prose-pre:bg-gray-light/50 prose-ul:text-black prose-ol:text-black prose-li:text-black max-w-none">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {message.text}
+                                    </ReactMarkdown>
+                                </div>
+                            ) : (
+                                <p className="font-medium break-words whitespace-pre-wrap">
+                                    {message.text}
+                                </p>
+                            )}
                             <p
                                 className={cn(
-                                    'mt-1 text-xs',
+                                    'mt-2 text-xs font-medium',
                                     message.sender === 'user'
                                         ? 'text-black/70'
                                         : 'text-gray/70',
@@ -174,12 +184,28 @@ export const ChatBotModal = ({ open, onOpenChange }: ChatBotModalProps) => {
                         </div>
                     </div>
                 ))}
+                {isLoading && (
+                    <div className="animate-fadeIn flex justify-start">
+                        <div className="max-w-[85%] rounded-2xl border-2 border-gray-light bg-white px-4 py-3 shadow-md">
+                            <div className="flex items-center gap-2">
+                                <div className="flex gap-1">
+                                    <span className="size-2 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]"></span>
+                                    <span className="size-2 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]"></span>
+                                    <span className="size-2 animate-bounce rounded-full bg-primary"></span>
+                                </div>
+                                <span className="text-sm text-gray">
+                                    Typing...
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
-            <div className="border-t border-gray-light bg-white p-4">
-                <div className="flex items-center gap-2">
+            <div className="border-t-2 border-gray-light bg-white p-4">
+                <div className="flex items-center gap-3">
                     <input
                         type="text"
                         value={inputMessage}
@@ -191,12 +217,12 @@ export const ChatBotModal = ({ open, onOpenChange }: ChatBotModalProps) => {
                                 : 'Type your message...'
                         }
                         disabled={isLoading}
-                        className="flex-1 rounded-lg border border-gray-light bg-white px-4 py-2.5 text-sm text-black placeholder:text-gray focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex-1 rounded-xl border-2 border-gray-light bg-white px-4 py-3 text-sm font-medium text-black transition-all duration-200 placeholder:text-gray focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
                     />
                     <button
                         onClick={handleSendMessage}
                         disabled={!inputMessage.trim() || isLoading}
-                        className="flex items-center justify-center rounded-lg bg-primary p-2.5 text-black transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-black shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                         aria-label="Send message"
                     >
                         <Send className="size-5" />
