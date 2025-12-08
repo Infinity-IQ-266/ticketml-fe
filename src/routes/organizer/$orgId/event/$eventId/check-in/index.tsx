@@ -1,5 +1,8 @@
 import { cn } from '@/lib/utils';
+import { checkInTicketMutation } from '@/services/client/@tanstack/react-query.gen';
+import { useMutation } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
+import { BrowserQRCodeReader } from '@zxing/library';
 import {
     AlertCircle,
     ArrowLeft,
@@ -10,6 +13,7 @@ import {
     XCircle,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute(
     '/organizer/$orgId/event/$eventId/check-in/',
@@ -30,8 +34,9 @@ interface ScanResult {
 }
 
 function RouteComponent() {
-    const { orgId } = Route.useParams();
+    const { orgId, eventId } = Route.useParams();
     const videoRef = useRef<HTMLVideoElement>(null);
+    const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
     const [hasPermission, setHasPermission] = useState<boolean | null>(null);
     const [facingMode, setFacingMode] = useState<'user' | 'environment'>(
         'environment',
@@ -41,6 +46,80 @@ function RouteComponent() {
         message: 'Point camera at QR code to check in',
     });
     const [isScanning, setIsScanning] = useState(false);
+    const [lastScannedCode, setLastScannedCode] = useState<string>('');
+    const scanCooldownRef = useRef<boolean>(false);
+
+    // Check-in mutation
+    const checkInMutation = useMutation(checkInTicketMutation());
+
+    // Handle check-in API call
+    const handleCheckIn = useCallback(
+        async (qrCode: string) => {
+            // Prevent duplicate scans
+            if (scanCooldownRef.current || qrCode === lastScannedCode) {
+                return;
+            }
+
+            scanCooldownRef.current = true;
+            setLastScannedCode(qrCode);
+            setIsScanning(true);
+            setScanResult({ status: 'scanning', message: 'Processing...' });
+
+            try {
+                const response = await checkInMutation.mutateAsync({
+                    path: { eventId: Number(eventId) },
+                    body: { qrCode },
+                });
+
+                const data = response.data as
+                    | {
+                          ticketType?: string;
+                          holderName?: string;
+                          eventTitle?: string;
+                      }
+                    | undefined;
+
+                setScanResult({
+                    status: 'success',
+                    message: 'Check-in successful!',
+                    ticketInfo: {
+                        eventName: data?.eventTitle || 'Event',
+                        ticketType: data?.ticketType || 'N/A',
+                        holderName: data?.holderName || 'N/A',
+                    },
+                });
+                toast.success('Ticket checked in successfully!');
+            } catch (error) {
+                const errorMessage =
+                    error instanceof Error ? error.message : 'Check-in failed';
+
+                // Check if already used
+                const isAlreadyUsed = errorMessage
+                    .toLowerCase()
+                    .includes('already');
+
+                setScanResult({
+                    status: isAlreadyUsed ? 'already-used' : 'error',
+                    message: isAlreadyUsed
+                        ? 'This ticket has already been used'
+                        : errorMessage,
+                });
+                toast.error(errorMessage);
+            } finally {
+                setIsScanning(false);
+
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    setScanResult({
+                        status: 'idle',
+                        message: 'Point camera at QR code to check in',
+                    });
+                    scanCooldownRef.current = false;
+                }, 3000);
+            }
+        },
+        [checkInMutation, eventId, lastScannedCode],
+    );
 
     const startCamera = useCallback(async () => {
         try {
@@ -52,17 +131,42 @@ function RouteComponent() {
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
                 setHasPermission(true);
+
+                // Initialize QR code reader
+                if (!codeReaderRef.current) {
+                    codeReaderRef.current = new BrowserQRCodeReader();
+                }
+
+                // Start continuous QR code scanning
+                codeReaderRef.current
+                    .decodeFromVideoElement(videoRef.current)
+                    .then((result) => {
+                        if (result) {
+                            handleCheckIn(result.getText());
+                        }
+                    })
+                    .catch((err) => {
+                        // Ignore errors, will retry on next camera start
+                        console.error('QR scanning error:', err);
+                    });
             }
         } catch (err) {
             console.error('Error accessing camera:', err);
             setHasPermission(false);
         }
-    }, [facingMode]);
+    }, [facingMode, handleCheckIn]);
 
     const stopCamera = useCallback(() => {
+        // Stop QR code reader
+        if (codeReaderRef.current) {
+            codeReaderRef.current.reset();
+        }
+
+        // Stop video stream
         if (videoRef.current && videoRef.current.srcObject) {
             const stream = videoRef.current.srcObject as MediaStream;
             stream.getTracks().forEach((track) => track.stop());
+            videoRef.current.srcObject = null;
         }
     }, []);
 
@@ -76,53 +180,6 @@ function RouteComponent() {
     const switchCamera = () => {
         stopCamera();
         setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
-    };
-
-    const simulateScan = (type: ScanStatus) => {
-        setIsScanning(true);
-        setScanResult({ status: 'scanning', message: 'Processing...' });
-
-        setTimeout(() => {
-            setIsScanning(false);
-            switch (type) {
-                case 'success':
-                    setScanResult({
-                        status: 'success',
-                        message: 'Check-in successful!',
-                        ticketInfo: {
-                            eventName: 'Tech Summit 2025',
-                            ticketType: 'VIP',
-                            holderName: 'John Doe',
-                        },
-                    });
-                    break;
-                case 'already-used':
-                    setScanResult({
-                        status: 'already-used',
-                        message: 'This ticket has already been used',
-                        ticketInfo: {
-                            eventName: 'Tech Summit 2025',
-                            ticketType: 'Regular',
-                            holderName: 'Jane Smith',
-                        },
-                    });
-                    break;
-                case 'error':
-                    setScanResult({
-                        status: 'error',
-                        message: 'Invalid QR code or wrong event',
-                    });
-                    break;
-            }
-
-            // Reset after 3 seconds
-            setTimeout(() => {
-                setScanResult({
-                    status: 'idle',
-                    message: 'Point camera at QR code to check in',
-                });
-            }, 3000);
-        }, 1000);
     };
 
     const getStatusIcon = () => {
@@ -286,33 +343,6 @@ function RouteComponent() {
                                 </div>
                             </div>
                         )}
-                    </div>
-                </div>
-
-                {/* Demo Buttons - Remove these when integrating real scanning */}
-                <div className="rounded-2xl border-2 border-dashed border-gray-light bg-white p-6">
-                    <p className="mb-4 text-center text-sm font-semibold text-gray">
-                        Demo Controls (Remove when API is integrated)
-                    </p>
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                        <button
-                            onClick={() => simulateScan('success')}
-                            className="rounded-lg bg-green px-4 py-3 font-semibold text-white transition-all hover:bg-green-darken"
-                        >
-                            Simulate Success
-                        </button>
-                        <button
-                            onClick={() => simulateScan('already-used')}
-                            className="rounded-lg bg-red px-4 py-3 font-semibold text-white transition-all hover:bg-red/80"
-                        >
-                            Simulate Used
-                        </button>
-                        <button
-                            onClick={() => simulateScan('error')}
-                            className="rounded-lg bg-gray px-4 py-3 font-semibold text-white transition-all hover:bg-gray/80"
-                        >
-                            Simulate Error
-                        </button>
                     </div>
                 </div>
             </div>
