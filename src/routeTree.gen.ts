@@ -18,9 +18,10 @@ import { Route as MyTicketsIndexRouteImport } from './routes/my-tickets/index'
 import { Route as OrganizerOrgIdIndexRouteImport } from './routes/organizer/$orgId/index'
 import { Route as Oauth2RedirectIndexRouteImport } from './routes/oauth2/redirect/index'
 import { Route as EventEventIdIndexRouteImport } from './routes/event/$eventId/index'
-import { Route as OrganizerOrgIdCheckInIndexRouteImport } from './routes/organizer/$orgId/check-in/index'
 import { Route as EventEventIdPaymentIndexRouteImport } from './routes/event/$eventId/payment/index'
+import { Route as OrganizerOrgIdEventEventIdIndexRouteImport } from './routes/organizer/$orgId/event/$eventId/index'
 import { Route as EventEventIdPaymentConfirmIndexRouteImport } from './routes/event/$eventId/payment/confirm/index'
+import { Route as OrganizerOrgIdEventEventIdCheckInIndexRouteImport } from './routes/organizer/$orgId/event/$eventId/check-in/index'
 
 const OrganizerRouteRoute = OrganizerRouteRouteImport.update({
   id: '/organizer',
@@ -67,23 +68,29 @@ const EventEventIdIndexRoute = EventEventIdIndexRouteImport.update({
   path: '/event/$eventId/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrganizerOrgIdCheckInIndexRoute =
-  OrganizerOrgIdCheckInIndexRouteImport.update({
-    id: '/$orgId/check-in/',
-    path: '/$orgId/check-in/',
-    getParentRoute: () => OrganizerRouteRoute,
-  } as any)
 const EventEventIdPaymentIndexRoute =
   EventEventIdPaymentIndexRouteImport.update({
     id: '/event/$eventId/payment/',
     path: '/event/$eventId/payment/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const OrganizerOrgIdEventEventIdIndexRoute =
+  OrganizerOrgIdEventEventIdIndexRouteImport.update({
+    id: '/$orgId/event/$eventId/',
+    path: '/$orgId/event/$eventId/',
+    getParentRoute: () => OrganizerRouteRoute,
+  } as any)
 const EventEventIdPaymentConfirmIndexRoute =
   EventEventIdPaymentConfirmIndexRouteImport.update({
     id: '/event/$eventId/payment/confirm/',
     path: '/event/$eventId/payment/confirm/',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const OrganizerOrgIdEventEventIdCheckInIndexRoute =
+  OrganizerOrgIdEventEventIdCheckInIndexRouteImport.update({
+    id: '/$orgId/event/$eventId/check-in/',
+    path: '/$orgId/event/$eventId/check-in/',
+    getParentRoute: () => OrganizerRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -97,8 +104,9 @@ export interface FileRoutesByFullPath {
   '/oauth2/redirect': typeof Oauth2RedirectIndexRoute
   '/organizer/$orgId': typeof OrganizerOrgIdIndexRoute
   '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute
-  '/organizer/$orgId/check-in': typeof OrganizerOrgIdCheckInIndexRoute
   '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute
+  '/organizer/$orgId/event/$eventId': typeof OrganizerOrgIdEventEventIdIndexRoute
+  '/organizer/$orgId/event/$eventId/check-in': typeof OrganizerOrgIdEventEventIdCheckInIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,8 +118,9 @@ export interface FileRoutesByTo {
   '/oauth2/redirect': typeof Oauth2RedirectIndexRoute
   '/organizer/$orgId': typeof OrganizerOrgIdIndexRoute
   '/event/$eventId/payment': typeof EventEventIdPaymentIndexRoute
-  '/organizer/$orgId/check-in': typeof OrganizerOrgIdCheckInIndexRoute
   '/event/$eventId/payment/confirm': typeof EventEventIdPaymentConfirmIndexRoute
+  '/organizer/$orgId/event/$eventId': typeof OrganizerOrgIdEventEventIdIndexRoute
+  '/organizer/$orgId/event/$eventId/check-in': typeof OrganizerOrgIdEventEventIdCheckInIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,8 +134,9 @@ export interface FileRoutesById {
   '/oauth2/redirect/': typeof Oauth2RedirectIndexRoute
   '/organizer/$orgId/': typeof OrganizerOrgIdIndexRoute
   '/event/$eventId/payment/': typeof EventEventIdPaymentIndexRoute
-  '/organizer/$orgId/check-in/': typeof OrganizerOrgIdCheckInIndexRoute
   '/event/$eventId/payment/confirm/': typeof EventEventIdPaymentConfirmIndexRoute
+  '/organizer/$orgId/event/$eventId/': typeof OrganizerOrgIdEventEventIdIndexRoute
+  '/organizer/$orgId/event/$eventId/check-in/': typeof OrganizerOrgIdEventEventIdCheckInIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,8 +151,9 @@ export interface FileRouteTypes {
     | '/oauth2/redirect'
     | '/organizer/$orgId'
     | '/event/$eventId/payment'
-    | '/organizer/$orgId/check-in'
     | '/event/$eventId/payment/confirm'
+    | '/organizer/$orgId/event/$eventId'
+    | '/organizer/$orgId/event/$eventId/check-in'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,8 +165,9 @@ export interface FileRouteTypes {
     | '/oauth2/redirect'
     | '/organizer/$orgId'
     | '/event/$eventId/payment'
-    | '/organizer/$orgId/check-in'
     | '/event/$eventId/payment/confirm'
+    | '/organizer/$orgId/event/$eventId'
+    | '/organizer/$orgId/event/$eventId/check-in'
   id:
     | '__root__'
     | '/'
@@ -168,8 +180,9 @@ export interface FileRouteTypes {
     | '/oauth2/redirect/'
     | '/organizer/$orgId/'
     | '/event/$eventId/payment/'
-    | '/organizer/$orgId/check-in/'
     | '/event/$eventId/payment/confirm/'
+    | '/organizer/$orgId/event/$eventId/'
+    | '/organizer/$orgId/event/$eventId/check-in/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,19 +262,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventEventIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/organizer/$orgId/check-in/': {
-      id: '/organizer/$orgId/check-in/'
-      path: '/$orgId/check-in'
-      fullPath: '/organizer/$orgId/check-in'
-      preLoaderRoute: typeof OrganizerOrgIdCheckInIndexRouteImport
-      parentRoute: typeof OrganizerRouteRoute
-    }
     '/event/$eventId/payment/': {
       id: '/event/$eventId/payment/'
       path: '/event/$eventId/payment'
       fullPath: '/event/$eventId/payment'
       preLoaderRoute: typeof EventEventIdPaymentIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/organizer/$orgId/event/$eventId/': {
+      id: '/organizer/$orgId/event/$eventId/'
+      path: '/$orgId/event/$eventId'
+      fullPath: '/organizer/$orgId/event/$eventId'
+      preLoaderRoute: typeof OrganizerOrgIdEventEventIdIndexRouteImport
+      parentRoute: typeof OrganizerRouteRoute
     }
     '/event/$eventId/payment/confirm/': {
       id: '/event/$eventId/payment/confirm/'
@@ -270,19 +283,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventEventIdPaymentConfirmIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/organizer/$orgId/event/$eventId/check-in/': {
+      id: '/organizer/$orgId/event/$eventId/check-in/'
+      path: '/$orgId/event/$eventId/check-in'
+      fullPath: '/organizer/$orgId/event/$eventId/check-in'
+      preLoaderRoute: typeof OrganizerOrgIdEventEventIdCheckInIndexRouteImport
+      parentRoute: typeof OrganizerRouteRoute
+    }
   }
 }
 
 interface OrganizerRouteRouteChildren {
   OrganizerIndexRoute: typeof OrganizerIndexRoute
   OrganizerOrgIdIndexRoute: typeof OrganizerOrgIdIndexRoute
-  OrganizerOrgIdCheckInIndexRoute: typeof OrganizerOrgIdCheckInIndexRoute
+  OrganizerOrgIdEventEventIdIndexRoute: typeof OrganizerOrgIdEventEventIdIndexRoute
+  OrganizerOrgIdEventEventIdCheckInIndexRoute: typeof OrganizerOrgIdEventEventIdCheckInIndexRoute
 }
 
 const OrganizerRouteRouteChildren: OrganizerRouteRouteChildren = {
   OrganizerIndexRoute: OrganizerIndexRoute,
   OrganizerOrgIdIndexRoute: OrganizerOrgIdIndexRoute,
-  OrganizerOrgIdCheckInIndexRoute: OrganizerOrgIdCheckInIndexRoute,
+  OrganizerOrgIdEventEventIdIndexRoute: OrganizerOrgIdEventEventIdIndexRoute,
+  OrganizerOrgIdEventEventIdCheckInIndexRoute:
+    OrganizerOrgIdEventEventIdCheckInIndexRoute,
 }
 
 const OrganizerRouteRouteWithChildren = OrganizerRouteRoute._addFileChildren(

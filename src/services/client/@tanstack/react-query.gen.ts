@@ -11,27 +11,36 @@ import type { AxiosError } from 'axios';
 import { client } from '../client.gen';
 import {
     type Options,
+    addMember,
     addTicketTypeToEvent,
     checkInTicket,
     createEvent,
     createOrder,
     createOrganization,
     getAllEvents,
+    getAllOrganizations,
     getCurrentUser,
+    getDashboard,
     getEventById,
     getEventsByOrganization,
+    getMembers,
     getMyOrderHistory,
     getMyOrganizations,
+    getOrders,
     getTickets,
     handleChatMessage,
     handleVnpayIpn,
+    removeMember,
     updateEvent,
+    updateOrgStatus,
     updateOrganization,
     updateProfile,
     updateTicketType,
     upload,
 } from '../sdk.gen';
 import type {
+    AddMemberData,
+    AddMemberResponse,
     AddTicketTypeToEventData,
     AddTicketTypeToEventResponse,
     CheckInTicketData,
@@ -44,17 +53,27 @@ import type {
     CreateOrganizationResponse,
     GetAllEventsData,
     GetAllEventsResponse,
+    GetAllOrganizationsData,
+    GetAllOrganizationsResponse,
     GetCurrentUserData,
+    GetDashboardData,
     GetEventByIdData,
     GetEventsByOrganizationData,
+    GetMembersData,
     GetMyOrderHistoryData,
     GetMyOrganizationsData,
+    GetOrdersData,
+    GetOrdersResponse,
     GetTicketsData,
     HandleChatMessageData,
     HandleChatMessageResponse,
     HandleVnpayIpnData,
+    RemoveMemberData,
+    RemoveMemberResponse,
     UpdateEventData,
     UpdateEventResponse,
+    UpdateOrgStatusData,
+    UpdateOrgStatusResponse,
     UpdateOrganizationData,
     UpdateOrganizationResponse,
     UpdateProfileData,
@@ -232,6 +251,48 @@ export const createOrganizationMutation = (
     > = {
         mutationFn: async (fnOptions) => {
             const { data } = await createOrganization({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
+};
+
+export const getMembersQueryKey = (options: Options<GetMembersData>) =>
+    createQueryKey('getMembers', options);
+
+export const getMembersOptions = (options: Options<GetMembersData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getMembers({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true,
+            });
+            return data;
+        },
+        queryKey: getMembersQueryKey(options),
+    });
+};
+
+export const addMemberMutation = (
+    options?: Partial<Options<AddMemberData>>,
+): UseMutationOptions<
+    AddMemberResponse,
+    AxiosError<DefaultError>,
+    Options<AddMemberData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        AddMemberResponse,
+        AxiosError<DefaultError>,
+        Options<AddMemberData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await addMember({
                 ...options,
                 ...fnOptions,
                 throwOnError: true,
@@ -431,6 +492,30 @@ export const updateEventMutation = (
     return mutationOptions;
 };
 
+export const updateOrgStatusMutation = (
+    options?: Partial<Options<UpdateOrgStatusData>>,
+): UseMutationOptions<
+    UpdateOrgStatusResponse,
+    AxiosError<DefaultError>,
+    Options<UpdateOrgStatusData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        UpdateOrgStatusResponse,
+        AxiosError<DefaultError>,
+        Options<UpdateOrgStatusData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await updateOrgStatus({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
+};
+
 export const getTicketsQueryKey = (options?: Options<GetTicketsData>) =>
     createQueryKey('getTickets', options);
 
@@ -490,13 +575,13 @@ export const handleVnpayIpnOptions = (
     });
 };
 
-export const getAllEventsQueryKey = (options?: Options<GetAllEventsData>) =>
-    createQueryKey('getAllEvents', options);
+export const getOrdersQueryKey = (options: Options<GetOrdersData>) =>
+    createQueryKey('getOrders', options);
 
-export const getAllEventsOptions = (options?: Options<GetAllEventsData>) => {
+export const getOrdersOptions = (options: Options<GetOrdersData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getAllEvents({
+            const { data } = await getOrders({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -504,7 +589,7 @@ export const getAllEventsOptions = (options?: Options<GetAllEventsData>) => {
             });
             return data;
         },
-        queryKey: getAllEventsQueryKey(options),
+        queryKey: getOrdersQueryKey(options),
     });
 };
 
@@ -542,6 +627,88 @@ const createInfiniteParams = <
         };
     }
     return params as unknown as typeof page;
+};
+
+export const getOrdersInfiniteQueryKey = (
+    options: Options<GetOrdersData>,
+): QueryKey<Options<GetOrdersData>> =>
+    createQueryKey('getOrders', options, true);
+
+export const getOrdersInfiniteOptions = (options: Options<GetOrdersData>) => {
+    return infiniteQueryOptions<
+        GetOrdersResponse,
+        AxiosError<DefaultError>,
+        InfiniteData<GetOrdersResponse>,
+        QueryKey<Options<GetOrdersData>>,
+        | number
+        | Pick<
+              QueryKey<Options<GetOrdersData>>[0],
+              'body' | 'headers' | 'path' | 'query'
+          >
+    >(
+        // @ts-ignore
+        {
+            queryFn: async ({ pageParam, queryKey, signal }) => {
+                // @ts-ignore
+                const page: Pick<
+                    QueryKey<Options<GetOrdersData>>[0],
+                    'body' | 'headers' | 'path' | 'query'
+                > =
+                    typeof pageParam === 'object'
+                        ? pageParam
+                        : {
+                              query: {
+                                  page: pageParam,
+                              },
+                          };
+                const params = createInfiniteParams(queryKey, page);
+                const { data } = await getOrders({
+                    ...options,
+                    ...params,
+                    signal,
+                    throwOnError: true,
+                });
+                return data;
+            },
+            queryKey: getOrdersInfiniteQueryKey(options),
+        },
+    );
+};
+
+export const getDashboardQueryKey = (options: Options<GetDashboardData>) =>
+    createQueryKey('getDashboard', options);
+
+export const getDashboardOptions = (options: Options<GetDashboardData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getDashboard({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true,
+            });
+            return data;
+        },
+        queryKey: getDashboardQueryKey(options),
+    });
+};
+
+export const getAllEventsQueryKey = (options?: Options<GetAllEventsData>) =>
+    createQueryKey('getAllEvents', options);
+
+export const getAllEventsOptions = (options?: Options<GetAllEventsData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getAllEvents({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true,
+            });
+            return data;
+        },
+        queryKey: getAllEventsQueryKey(options),
+    });
 };
 
 export const getAllEventsInfiniteQueryKey = (
@@ -608,4 +775,97 @@ export const getEventByIdOptions = (options: Options<GetEventByIdData>) => {
         },
         queryKey: getEventByIdQueryKey(options),
     });
+};
+
+export const getAllOrganizationsQueryKey = (
+    options?: Options<GetAllOrganizationsData>,
+) => createQueryKey('getAllOrganizations', options);
+
+export const getAllOrganizationsOptions = (
+    options?: Options<GetAllOrganizationsData>,
+) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getAllOrganizations({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true,
+            });
+            return data;
+        },
+        queryKey: getAllOrganizationsQueryKey(options),
+    });
+};
+
+export const getAllOrganizationsInfiniteQueryKey = (
+    options?: Options<GetAllOrganizationsData>,
+): QueryKey<Options<GetAllOrganizationsData>> =>
+    createQueryKey('getAllOrganizations', options, true);
+
+export const getAllOrganizationsInfiniteOptions = (
+    options?: Options<GetAllOrganizationsData>,
+) => {
+    return infiniteQueryOptions<
+        GetAllOrganizationsResponse,
+        AxiosError<DefaultError>,
+        InfiniteData<GetAllOrganizationsResponse>,
+        QueryKey<Options<GetAllOrganizationsData>>,
+        | number
+        | Pick<
+              QueryKey<Options<GetAllOrganizationsData>>[0],
+              'body' | 'headers' | 'path' | 'query'
+          >
+    >(
+        // @ts-ignore
+        {
+            queryFn: async ({ pageParam, queryKey, signal }) => {
+                // @ts-ignore
+                const page: Pick<
+                    QueryKey<Options<GetAllOrganizationsData>>[0],
+                    'body' | 'headers' | 'path' | 'query'
+                > =
+                    typeof pageParam === 'object'
+                        ? pageParam
+                        : {
+                              query: {
+                                  page: pageParam,
+                              },
+                          };
+                const params = createInfiniteParams(queryKey, page);
+                const { data } = await getAllOrganizations({
+                    ...options,
+                    ...params,
+                    signal,
+                    throwOnError: true,
+                });
+                return data;
+            },
+            queryKey: getAllOrganizationsInfiniteQueryKey(options),
+        },
+    );
+};
+
+export const removeMemberMutation = (
+    options?: Partial<Options<RemoveMemberData>>,
+): UseMutationOptions<
+    RemoveMemberResponse,
+    AxiosError<DefaultError>,
+    Options<RemoveMemberData>
+> => {
+    const mutationOptions: UseMutationOptions<
+        RemoveMemberResponse,
+        AxiosError<DefaultError>,
+        Options<RemoveMemberData>
+    > = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await removeMember({
+                ...options,
+                ...fnOptions,
+                throwOnError: true,
+            });
+            return data;
+        },
+    };
+    return mutationOptions;
 };

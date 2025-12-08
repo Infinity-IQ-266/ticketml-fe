@@ -9,9 +9,11 @@ import {
     SwitchCamera,
     XCircle,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-export const Route = createFileRoute('/organizer/$orgId/check-in/')({
+export const Route = createFileRoute(
+    '/organizer/$orgId/event/$eventId/check-in/',
+)({
     component: RouteComponent,
 });
 
@@ -40,14 +42,7 @@ function RouteComponent() {
     });
     const [isScanning, setIsScanning] = useState(false);
 
-    useEffect(() => {
-        startCamera();
-        return () => {
-            stopCamera();
-        };
-    }, [facingMode]);
-
-    const startCamera = async () => {
+    const startCamera = useCallback(async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: { facingMode: facingMode },
@@ -62,14 +57,21 @@ function RouteComponent() {
             console.error('Error accessing camera:', err);
             setHasPermission(false);
         }
-    };
+    }, [facingMode]);
 
-    const stopCamera = () => {
+    const stopCamera = useCallback(() => {
         if (videoRef.current && videoRef.current.srcObject) {
             const stream = videoRef.current.srcObject as MediaStream;
             stream.getTracks().forEach((track) => track.stop());
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        startCamera();
+        return () => {
+            stopCamera();
+        };
+    }, [startCamera, stopCamera]);
 
     const switchCamera = () => {
         stopCamera();

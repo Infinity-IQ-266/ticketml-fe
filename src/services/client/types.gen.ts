@@ -38,6 +38,11 @@ export type OrganizationRequestDto = {
     logo?: Blob | File;
 };
 
+export type MemberRequestDto = {
+    email: string;
+    role: 'OWNER' | 'MANAGER' | 'STAFF';
+};
+
 export type EventCreateRequestDto = {
     title: string;
     description?: string;
@@ -80,6 +85,10 @@ export type EventUpdateRequestDto = {
     location?: string;
     startDate?: string;
     endDate?: string;
+};
+
+export type OrgStatusUpdateDto = {
+    status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
 };
 
 export type GetCurrentUserData = {
@@ -186,6 +195,42 @@ export type CreateOrganizationResponses = {
 
 export type CreateOrganizationResponse =
     CreateOrganizationResponses[keyof CreateOrganizationResponses];
+
+export type GetMembersData = {
+    body?: never;
+    path: {
+        orgId: number;
+    };
+    query?: never;
+    url: '/api/v1/organizer/organizations/{orgId}/members';
+};
+
+export type GetMembersResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type GetMembersResponse = GetMembersResponses[keyof GetMembersResponses];
+
+export type AddMemberData = {
+    body: MemberRequestDto;
+    path: {
+        orgId: number;
+    };
+    query?: never;
+    url: '/api/v1/organizer/organizations/{orgId}/members';
+};
+
+export type AddMemberResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type AddMemberResponse = AddMemberResponses[keyof AddMemberResponses];
 
 export type GetEventsByOrganizationData = {
     body?: never;
@@ -335,6 +380,25 @@ export type UpdateEventResponses = {
 export type UpdateEventResponse =
     UpdateEventResponses[keyof UpdateEventResponses];
 
+export type UpdateOrgStatusData = {
+    body: OrgStatusUpdateDto;
+    path: {
+        orgId: number;
+    };
+    query?: never;
+    url: '/api/v1/admin/organizations/{orgId}/status';
+};
+
+export type UpdateOrgStatusResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type UpdateOrgStatusResponse =
+    UpdateOrgStatusResponses[keyof UpdateOrgStatusResponses];
+
 export type GetTicketsData = {
     body?: never;
     path?: never;
@@ -387,6 +451,46 @@ export type HandleVnpayIpnResponses = {
 export type HandleVnpayIpnResponse =
     HandleVnpayIpnResponses[keyof HandleVnpayIpnResponses];
 
+export type GetOrdersData = {
+    body?: never;
+    path: {
+        orgId: number;
+    };
+    query?: {
+        page?: number;
+        size?: number;
+    };
+    url: '/api/v1/organizer/organizations/{orgId}/orders';
+};
+
+export type GetOrdersResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type GetOrdersResponse = GetOrdersResponses[keyof GetOrdersResponses];
+
+export type GetDashboardData = {
+    body?: never;
+    path: {
+        orgId: number;
+    };
+    query?: never;
+    url: '/api/v1/organizer/organizations/{orgId}/dashboard';
+};
+
+export type GetDashboardResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type GetDashboardResponse =
+    GetDashboardResponses[keyof GetDashboardResponses];
+
 export type GetAllEventsData = {
     body?: never;
     path?: never;
@@ -431,3 +535,50 @@ export type GetEventByIdResponses = {
 
 export type GetEventByIdResponse =
     GetEventByIdResponses[keyof GetEventByIdResponses];
+
+export type GetAllOrganizationsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        page?: number;
+        size?: number;
+        direction?: 'ASC' | 'DESC';
+        attribute?: string;
+        name?: string;
+        email?: string;
+        status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+        createdAfter?: string;
+        createdBefore?: string;
+    };
+    url: '/api/v1/admin/organizations';
+};
+
+export type GetAllOrganizationsResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type GetAllOrganizationsResponse =
+    GetAllOrganizationsResponses[keyof GetAllOrganizationsResponses];
+
+export type RemoveMemberData = {
+    body?: never;
+    path: {
+        orgId: number;
+        userId: number;
+    };
+    query?: never;
+    url: '/api/v1/organizer/organizations/{orgId}/members/{userId}';
+};
+
+export type RemoveMemberResponses = {
+    /**
+     * OK
+     */
+    200: Response;
+};
+
+export type RemoveMemberResponse =
+    RemoveMemberResponses[keyof RemoveMemberResponses];

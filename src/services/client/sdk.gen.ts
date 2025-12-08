@@ -7,6 +7,8 @@ import {
 } from './client';
 import { client } from './client.gen';
 import type {
+    AddMemberData,
+    AddMemberResponses,
     AddTicketTypeToEventData,
     AddTicketTypeToEventResponses,
     CheckInTicketData,
@@ -19,24 +21,36 @@ import type {
     CreateOrganizationResponses,
     GetAllEventsData,
     GetAllEventsResponses,
+    GetAllOrganizationsData,
+    GetAllOrganizationsResponses,
     GetCurrentUserData,
     GetCurrentUserResponses,
+    GetDashboardData,
+    GetDashboardResponses,
     GetEventByIdData,
     GetEventByIdResponses,
     GetEventsByOrganizationData,
     GetEventsByOrganizationResponses,
+    GetMembersData,
+    GetMembersResponses,
     GetMyOrderHistoryData,
     GetMyOrderHistoryResponses,
     GetMyOrganizationsData,
     GetMyOrganizationsResponses,
+    GetOrdersData,
+    GetOrdersResponses,
     GetTicketsData,
     GetTicketsResponses,
     HandleChatMessageData,
     HandleChatMessageResponses,
     HandleVnpayIpnData,
     HandleVnpayIpnResponses,
+    RemoveMemberData,
+    RemoveMemberResponses,
     UpdateEventData,
     UpdateEventResponses,
+    UpdateOrgStatusData,
+    UpdateOrgStatusResponses,
     UpdateOrganizationData,
     UpdateOrganizationResponses,
     UpdateProfileData,
@@ -157,6 +171,36 @@ export const createOrganization = <ThrowOnError extends boolean = false>(
         headers: {
             'Content-Type': null,
             ...options?.headers,
+        },
+    });
+};
+
+export const getMembers = <ThrowOnError extends boolean = false>(
+    options: Options<GetMembersData, ThrowOnError>,
+) => {
+    return (options.client ?? client).get<
+        GetMembersResponses,
+        unknown,
+        ThrowOnError
+    >({
+        url: '/api/v1/organizer/organizations/{orgId}/members',
+        ...options,
+    });
+};
+
+export const addMember = <ThrowOnError extends boolean = false>(
+    options: Options<AddMemberData, ThrowOnError>,
+) => {
+    return (options.client ?? client).post<
+        AddMemberResponses,
+        unknown,
+        ThrowOnError
+    >({
+        url: '/api/v1/organizer/organizations/{orgId}/members',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
         },
     });
 };
@@ -293,6 +337,23 @@ export const updateEvent = <ThrowOnError extends boolean = false>(
     });
 };
 
+export const updateOrgStatus = <ThrowOnError extends boolean = false>(
+    options: Options<UpdateOrgStatusData, ThrowOnError>,
+) => {
+    return (options.client ?? client).patch<
+        UpdateOrgStatusResponses,
+        unknown,
+        ThrowOnError
+    >({
+        url: '/api/v1/admin/organizations/{orgId}/status',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+        },
+    });
+};
+
 export const getTickets = <ThrowOnError extends boolean = false>(
     options?: Options<GetTicketsData, ThrowOnError>,
 ) => {
@@ -332,6 +393,32 @@ export const handleVnpayIpn = <ThrowOnError extends boolean = false>(
     });
 };
 
+export const getOrders = <ThrowOnError extends boolean = false>(
+    options: Options<GetOrdersData, ThrowOnError>,
+) => {
+    return (options.client ?? client).get<
+        GetOrdersResponses,
+        unknown,
+        ThrowOnError
+    >({
+        url: '/api/v1/organizer/organizations/{orgId}/orders',
+        ...options,
+    });
+};
+
+export const getDashboard = <ThrowOnError extends boolean = false>(
+    options: Options<GetDashboardData, ThrowOnError>,
+) => {
+    return (options.client ?? client).get<
+        GetDashboardResponses,
+        unknown,
+        ThrowOnError
+    >({
+        url: '/api/v1/organizer/organizations/{orgId}/dashboard',
+        ...options,
+    });
+};
+
 export const getAllEvents = <ThrowOnError extends boolean = false>(
     options?: Options<GetAllEventsData, ThrowOnError>,
 ) => {
@@ -354,6 +441,32 @@ export const getEventById = <ThrowOnError extends boolean = false>(
         ThrowOnError
     >({
         url: '/api/v1/events/{eventId}',
+        ...options,
+    });
+};
+
+export const getAllOrganizations = <ThrowOnError extends boolean = false>(
+    options?: Options<GetAllOrganizationsData, ThrowOnError>,
+) => {
+    return (options?.client ?? client).get<
+        GetAllOrganizationsResponses,
+        unknown,
+        ThrowOnError
+    >({
+        url: '/api/v1/admin/organizations',
+        ...options,
+    });
+};
+
+export const removeMember = <ThrowOnError extends boolean = false>(
+    options: Options<RemoveMemberData, ThrowOnError>,
+) => {
+    return (options.client ?? client).delete<
+        RemoveMemberResponses,
+        unknown,
+        ThrowOnError
+    >({
+        url: '/api/v1/organizer/organizations/{orgId}/members/{userId}',
         ...options,
     });
 };

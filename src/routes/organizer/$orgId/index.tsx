@@ -1,16 +1,27 @@
 import { cn } from '@/lib/utils';
-import { Link, createFileRoute } from '@tanstack/react-router';
+import {
+    getDashboardOptions,
+    getEventsByOrganizationOptions,
+    getMyOrganizationsOptions,
+} from '@/services/client/@tanstack/react-query.gen';
+import { useQuery } from '@tanstack/react-query';
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
     Building2,
     Calendar,
+    DollarSign,
     Mail,
     MapPin,
     Phone,
     Plus,
     QrCode,
     Settings,
+    Ticket,
+    TrendingUp,
 } from 'lucide-react';
 import { useState } from 'react';
+
+import { CreateEventModal } from './-components';
 
 export const Route = createFileRoute('/organizer/$orgId/')({
     component: RouteComponent,
@@ -18,44 +29,145 @@ export const Route = createFileRoute('/organizer/$orgId/')({
 
 type TabType = 'events' | 'settings';
 
+// Types based on actual API response
+interface Organization {
+    organizationId: number;
+    name: string;
+    description: string;
+    logoUrl: string;
+    email: string | null;
+    phoneNumber: string | null;
+    address: string;
+}
+
+interface TicketType {
+    id: number;
+    type: string;
+    price: number;
+    totalQuantity: number;
+    remainingQuantity: number;
+    status: string | null;
+}
+
+interface EventData {
+    id: number;
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    location: string;
+    organizationId: number;
+    organizationName: string;
+    ticketTypes: TicketType[];
+}
+
+interface DashboardData {
+    totalRevenue: number;
+    totalOrders: number;
+    totalTicketsSold: number;
+    totalEvents: number;
+}
+
 function RouteComponent() {
     const { orgId } = Route.useParams();
     const [activeTab, setActiveTab] = useState<TabType>('events');
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const navigate = useNavigate();
 
-    // Mock data - will be replaced with API calls
-    const organization = {
-        id: orgId,
-        name: 'NTPMM Organization',
-        description:
-            'We organize amazing tech events and conferences for developers',
-        email: 'contact@ntpmm.org',
-        phoneNumber: '+84 123 456 789',
-        address: '268 Ly Thuong Kiet, District 10, Ho Chi Minh City',
-        logoUrl: '',
-    };
+    // Fetch organization details from my organizations list
+    const { data: orgsResponse } = useQuery({
+        ...getMyOrganizationsOptions(),
+        staleTime: 60 * 60 * 1000,
+    });
 
-    const events = [
-        {
-            id: '1',
-            title: 'Tech Summit 2025',
-            startDate: '2025-01-15',
-            endDate: '2025-01-15',
-            location: 'HCMUT',
-            ticketsSold: 150,
-            totalTickets: 200,
-            revenue: 15000000,
-        },
-        {
-            id: '2',
-            title: 'Web Development Workshop',
-            startDate: '2025-02-20',
-            endDate: '2025-02-20',
-            location: 'FPT University',
-            ticketsSold: 80,
-            totalTickets: 100,
-            revenue: 8000000,
-        },
-    ];
+    // Fetch dashboard data for stats
+    const { data: dashboardResponse } = useQuery({
+        ...getDashboardOptions({
+            path: { orgId: Number(orgId) },
+        }),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    // Fetch events for this organization
+    const { data: eventsResponse, isLoading: isLoadingEvents } = useQuery({
+        ...getEventsByOrganizationOptions({
+            path: { orgId: Number(orgId) },
+        }),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    // Extract organization from the organizations list
+    const organizations = (orgsResponse?.data as Organization[]) ?? [];
+    const currentOrg = organizations.find(
+        (org) => org.organizationId === Number(orgId),
+    );
+
+    const organization = currentOrg
+        ? {
+              id: currentOrg.organizationId,
+              name: currentOrg.name ?? 'My Organization',
+              description: currentOrg.description ?? 'No description available',
+              email: currentOrg.email ?? '',
+              phoneNumber: currentOrg.phoneNumber ?? '',
+              address: currentOrg.address ?? '',
+              logoUrl: currentOrg.logoUrl ?? '',
+          }
+        : {
+              id: Number(orgId),
+              name: 'Loading...',
+              description: '',
+              email: '',
+              phoneNumber: '',
+              address: '',
+              logoUrl: '',
+          };
+
+    // Extract dashboard stats
+    const dashboardData = dashboardResponse?.data as DashboardData | undefined;
+
+    // Extract events from API response and calculate stats
+    const apiEvents = (eventsResponse?.data as EventData[]) ?? [];
+    const events = apiEvents.map((event) => {
+        // Calculate tickets sold from ticket types
+        const totalTickets = event.ticketTypes.reduce(
+            (sum, tt) => sum + tt.totalQuantity,
+            0,
+        );
+        const ticketsSold = event.ticketTypes.reduce(
+            (sum, tt) => sum + (tt.totalQuantity - tt.remainingQuantity),
+            0,
+        );
+        const revenue = event.ticketTypes.reduce(
+            (sum, tt) =>
+                sum + tt.price * (tt.totalQuantity - tt.remainingQuantity),
+            0,
+        );
+
+        return {
+            id: String(event.id),
+            title: event.title ?? 'Untitled Event',
+            startDate: event.startDate ?? '',
+            endDate: event.endDate ?? '',
+            location: event.location ?? 'TBA',
+            ticketsSold,
+            totalTickets,
+            revenue,
+            status: 'ACTIVE',
+        };
+    });
+
+    if (isLoadingEvents || !currentOrg) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center">
+                <div className="text-center">
+                    <div className="mb-4 inline-block size-12 animate-spin rounded-full border-4 border-gray-light border-t-primary"></div>
+                    <p className="text-lg font-semibold text-gray">
+                        Loading dashboard...
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex w-full flex-col px-5 py-5 md:px-10 md:py-10">
@@ -83,15 +195,66 @@ function RouteComponent() {
                             </p>
                         </div>
                     </div>
-                    <Link
-                        to="/organizer/$orgId/check-in"
-                        params={{ orgId }}
-                        className="flex items-center gap-2 rounded-lg bg-green px-4 py-3 font-semibold text-white shadow-md transition-all hover:bg-green-darken hover:shadow-lg active:scale-95 md:px-6"
-                    >
-                        <QrCode className="size-5" />
-                        <span>Check-In</span>
-                    </Link>
                 </div>
+
+                {/* Dashboard Stats Cards */}
+                {dashboardData && (
+                    <div className="mt-6 grid gap-4 md:grid-cols-4">
+                        <div className="flex items-center gap-3 rounded-lg border border-gray-light bg-gradient-to-br from-green/10 to-green/5 p-4 shadow-sm">
+                            <div className="rounded-lg bg-green/20 p-2">
+                                <DollarSign className="size-5 text-green-darken" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-xs font-medium text-gray">
+                                    Total Revenue
+                                </p>
+                                <p className="truncate text-lg font-bold text-black">
+                                    {dashboardData.totalRevenue.toLocaleString()}{' '}
+                                    VND
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 rounded-lg border border-gray-light bg-gradient-to-br from-primary/10 to-primary/5 p-4 shadow-sm">
+                            <div className="rounded-lg bg-primary/20 p-2">
+                                <TrendingUp className="size-5 text-primary-darken" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-xs font-medium text-gray">
+                                    Total Orders
+                                </p>
+                                <p className="truncate text-lg font-bold text-black">
+                                    {dashboardData.totalOrders}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 rounded-lg border border-gray-light bg-gradient-to-br from-secondary/10 to-secondary/5 p-4 shadow-sm">
+                            <div className="rounded-lg bg-secondary/20 p-2">
+                                <Ticket className="size-5 text-secondary-darken" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-xs font-medium text-gray">
+                                    Tickets Sold
+                                </p>
+                                <p className="truncate text-lg font-bold text-black">
+                                    {dashboardData.totalTicketsSold}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 rounded-lg border border-gray-light bg-gradient-to-br from-blue/10 to-blue/5 p-4 shadow-sm">
+                            <div className="rounded-lg bg-blue/20 p-2">
+                                <Calendar className="size-5 text-blue" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-xs font-medium text-gray">
+                                    Total Events
+                                </p>
+                                <p className="truncate text-lg font-bold text-black">
+                                    {dashboardData.totalEvents}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Organization Info Cards */}
                 <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -175,7 +338,10 @@ function RouteComponent() {
             {activeTab === 'events' && (
                 <div className="space-y-4">
                     {/* Create Event Button */}
-                    <button className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-primary/5 p-6 font-semibold text-black transition-all hover:bg-primary/10 hover:shadow-md">
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-primary/5 p-6 font-semibold text-black transition-all hover:bg-primary/10 hover:shadow-md"
+                    >
                         <Plus className="size-6" />
                         <span className="text-lg">Create New Event</span>
                     </button>
@@ -215,9 +381,33 @@ function RouteComponent() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <button className="flex-shrink-0 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-primary-darken hover:shadow-md md:px-6 md:py-3 md:text-base">
-                                            Manage
-                                        </button>
+                                        <div className="flex flex-shrink-0 flex-col gap-2 md:flex-row">
+                                            <Link
+                                                to="/organizer/$orgId/event/$eventId/check-in"
+                                                params={{
+                                                    orgId,
+                                                    eventId: event.id,
+                                                }}
+                                                className="flex items-center justify-center gap-2 rounded-lg bg-green px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-green-darken hover:shadow-md md:text-base"
+                                            >
+                                                <QrCode className="size-4" />
+                                                <span>Check-In</span>
+                                            </Link>
+                                            <button
+                                                className="flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-black transition-all hover:bg-primary-darken hover:shadow-md md:px-6 md:py-3 md:text-base"
+                                                onClick={() => {
+                                                    navigate({
+                                                        to: '/organizer/$orgId/event/$eventId',
+                                                        params: {
+                                                            orgId,
+                                                            eventId: event.id,
+                                                        },
+                                                    });
+                                                }}
+                                            >
+                                                Manage
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {/* Event Stats */}
@@ -320,6 +510,13 @@ function RouteComponent() {
                     </div>
                 </div>
             )}
+
+            {/* Create Event Modal */}
+            <CreateEventModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                orgId={orgId}
+            />
         </div>
     );
 }
