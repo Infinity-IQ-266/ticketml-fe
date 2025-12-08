@@ -40,17 +40,17 @@ export const UserAvatar = () => {
             ref={ref}
         >
             <button
-                className="group inline-flex items-center justify-center rounded-full transition-all duration-200 hover:cursor-pointer hover:bg-primary/10"
+                className="group inline-flex w-full items-center justify-center gap-1 rounded-full p-1 transition-all duration-200 hover:cursor-pointer hover:bg-primary/10"
                 type="button"
                 title="User Avatar"
                 onClick={() => {
                     setIsShowingDropdown((prev) => !prev);
                 }}
             >
-                <div className="-ml-[2px] inline-flex size-14 items-center justify-center rounded-full border-2 border-black bg-gradient-to-br from-primary/20 to-secondary/20">
+                <div className="inline-flex size-14 shrink-0 items-center justify-center rounded-full border-2 border-black bg-gradient-to-br from-primary/20 to-secondary/20">
                     <UserIcon className="aspect-[34/38] h-auto w-8" />
                 </div>
-                <div className="inline-flex items-center justify-center px-3">
+                <div className="inline-flex items-center justify-center px-2">
                     <p className="max-w-28 truncate text-xl font-bold text-nowrap text-black">
                         {meData?.fullName}
                     </p>

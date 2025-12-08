@@ -83,7 +83,7 @@ export const HeaderDesktop = () => {
                         Resources
                     </Link>
                 </div>
-                <div className="inline-flex gap-8">
+                <div className="inline-flex items-center gap-8">
                     <Cart />
                     {meResponse ? <UserAvatar /> : <LoginButton />}
                 </div>
