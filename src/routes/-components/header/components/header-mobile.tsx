@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { Menu as MenuIcon } from 'lucide-react';
 import { useState } from 'react';
 
-import { Cart, Menu } from '.';
+import { Menu } from '.';
 
 export const HeaderMobile = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,16 +22,13 @@ export const HeaderMobile = () => {
                 </Link>
 
                 <div className="inline-flex w-full grow items-center justify-end">
-                    <div className="inline-flex items-center gap-4 md:gap-6">
-                        <Cart />
-                        <button
-                            className="rounded-lg p-2 transition-all duration-200 hover:bg-primary/20 hover:text-black active:scale-95"
-                            aria-label="Menu"
-                            onClick={() => setIsMenuOpen(true)}
-                        >
-                            <MenuIcon size={32} className="md:size-9" />
-                        </button>
-                    </div>
+                    <button
+                        className="rounded-lg p-2 transition-all duration-200 hover:bg-primary/20 hover:text-black active:scale-95"
+                        aria-label="Menu"
+                        onClick={() => setIsMenuOpen(true)}
+                    >
+                        <MenuIcon size={32} className="md:size-9" />
+                    </button>
                 </div>
             </div>
 

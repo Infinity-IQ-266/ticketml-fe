@@ -1,17 +1,10 @@
 import { LogoIcon } from '@/assets/icons';
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
-} from '@/components/ui/input-group';
 import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
 import type { MeData } from '@/types';
 import { Link, useMatchRoute } from '@tanstack/react-router';
-import { SearchIcon, SlidersHorizontal } from 'lucide-react';
 
-import { Cart, LoginButton, UserAvatar } from '.';
+import { LoginButton, UserAvatar } from '.';
 
 export const HeaderDesktop = () => {
     const matchRoute = useMatchRoute();
@@ -29,21 +22,6 @@ export const HeaderDesktop = () => {
                     Ticket ML
                 </p>
             </Link>
-            <InputGroup className="ms-8 h-12 max-w-72 min-w-52 rounded-lg border border-gray-light shadow-sm transition-all duration-200 focus-within:border-primary focus-within:shadow-md 2xl:ms-16">
-                <InputGroupInput
-                    className="flex text-base text-black placeholder:text-base placeholder:font-normal placeholder:text-gray"
-                    placeholder="Search events..."
-                />
-                <InputGroupAddon>
-                    <SearchIcon className="size-6 text-gray transition-colors duration-200 group-focus-within:text-primary" />
-                </InputGroupAddon>
-
-                <InputGroupAddon align="inline-end">
-                    <InputGroupButton className="h-full rounded-lg transition-all duration-200 hover:cursor-pointer hover:bg-primary/20! active:scale-95">
-                        <SlidersHorizontal className="size-6 text-black" />
-                    </InputGroupButton>
-                </InputGroupAddon>
-            </InputGroup>
 
             <div className="inline-flex w-full grow items-center justify-end">
                 <div className="inline-flex w-full max-w-96 justify-around px-8">
@@ -84,7 +62,6 @@ export const HeaderDesktop = () => {
                     </Link>
                 </div>
                 <div className="inline-flex items-center gap-8">
-                    <Cart />
                     {meResponse ? <UserAvatar /> : <LoginButton />}
                 </div>
             </div>

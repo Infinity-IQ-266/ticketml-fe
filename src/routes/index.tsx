@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import {
     Carousel,
     CarouselContent,
@@ -5,13 +6,27 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { getAllEventsOptions } from '@/services/client/@tanstack/react-query.gen';
 import type { Event } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import Autoplay from 'embla-carousel-autoplay';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import {
+    ChevronLeft,
+    ChevronRight,
+    Search,
+    SlidersHorizontal,
+} from 'lucide-react';
+import { useRef, useState } from 'react';
 
 import { ChatBotButton, ChatBotModal, EventCard } from './-components';
 
@@ -20,35 +35,107 @@ export const Route = createFileRoute('/')({
 });
 
 function RouteComponent() {
-    const { data: response } = useQuery({
-        ...getAllEventsOptions(),
-        staleTime: 5 * 60 * 1000,
-    });
-    const events = (response?.data as Event[]) ?? [];
-    const [isChatOpen, setIsChatOpen] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
-    const eventsPerPage = 9;
     const navigate = useNavigate();
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0); // API uses 0-based page indexing
+    const [pageSize] = useState(9);
+
+    // Applied filters (used in API query)
+    const [appliedSearchTitle, setAppliedSearchTitle] = useState('');
+    const [appliedSearchLocation, setAppliedSearchLocation] = useState('');
+    const [appliedSortDirection, setAppliedSortDirection] = useState<
+        'ASC' | 'DESC'
+    >('DESC');
+    const [appliedSortAttribute, setAppliedSortAttribute] =
+        useState('createdAt');
+
+    // Temporary filter state (only for the modal)
+    const [tempSearchTitle, setTempSearchTitle] = useState('');
+    const [tempSearchLocation, setTempSearchLocation] = useState('');
+    const [tempSortDirection, setTempSortDirection] = useState<'ASC' | 'DESC'>(
+        'DESC',
+    );
+    const [tempSortAttribute, setTempSortAttribute] = useState('createdAt');
+
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
 
-    // Auto-open chat when component mounts
-    useEffect(() => {
-        setIsChatOpen(true);
-    }, []);
+    // Build query params using APPLIED filters only
+    const queryParams: Record<string, string | number> = {
+        page: currentPage,
+        size: pageSize,
+        direction: appliedSortDirection,
+        attribute: appliedSortAttribute,
+    };
 
-    // Pagination calculations
-    const totalPages = Math.ceil(events.length / eventsPerPage);
-    const startIndex = (currentPage - 1) * eventsPerPage;
-    const endIndex = startIndex + eventsPerPage;
-    const currentEvents = events.slice(startIndex, endIndex);
+    if (appliedSearchTitle.trim()) {
+        queryParams.title = appliedSearchTitle.trim();
+    }
+    if (appliedSearchLocation.trim()) {
+        queryParams.location = appliedSearchLocation.trim();
+    }
 
-    // Featured events for carousel (first 5)
-    const featuredEvents = events.slice(0, 5);
+    const { data: response } = useQuery({
+        ...getAllEventsOptions({
+            query: queryParams,
+        }),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const events = (response?.data as Event[]) ?? [];
+    const pagedResult = response?.pagedResult as
+        | {
+              pageNumber: number;
+              pageSize: number;
+              totalElements: number;
+              totalPages: number;
+          }
+        | undefined;
+
+    const { data: featuredResponse } = useQuery({
+        ...getAllEventsOptions({
+            query: {
+                page: 0,
+                size: 5,
+                direction: 'DESC',
+                attribute: 'createdAt',
+            },
+        }),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const featuredEvents = (featuredResponse?.data as Event[]) ?? [];
 
     const goToPage = (page: number) => {
         setCurrentPage(page);
         window.scrollTo({ top: 600, behavior: 'smooth' });
+    };
+
+    const handleOpenFilters = () => {
+        // Sync temp values with applied values when opening modal
+        setTempSearchTitle(appliedSearchTitle);
+        setTempSearchLocation(appliedSearchLocation);
+        setTempSortDirection(appliedSortDirection);
+        setTempSortAttribute(appliedSortAttribute);
+        setIsFilterOpen(true);
+    };
+
+    const handleApplyFilters = () => {
+        // Apply the temp values to actual filters
+        setAppliedSearchTitle(tempSearchTitle);
+        setAppliedSearchLocation(tempSearchLocation);
+        setAppliedSortDirection(tempSortDirection);
+        setAppliedSortAttribute(tempSortAttribute);
+        setCurrentPage(0); // Reset to first page on filter change
+        setIsFilterOpen(false);
+    };
+
+    const handleResetFilters = () => {
+        setTempSearchTitle('');
+        setTempSearchLocation('');
+        setTempSortDirection('DESC');
+        setTempSortAttribute('createdAt');
     };
 
     return (
@@ -107,21 +194,157 @@ function RouteComponent() {
 
             {/* All Events Section */}
             <section className="mx-auto w-full max-w-7xl px-4 py-12">
-                <div className="mb-8 flex items-center justify-between">
-                    <h2 className="text-3xl font-bold text-black">
-                        All Events
-                    </h2>
-                    <div className="text-sm text-gray">
-                        Showing {startIndex + 1}-
-                        {Math.min(endIndex, events.length)} of {events.length}{' '}
-                        events
+                {/* Header with Search and Filters */}
+                <div className="mb-8 space-y-4">
+                    <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                        <div>
+                            <h2 className="text-3xl font-bold text-black">
+                                All Events
+                            </h2>
+                            {pagedResult && (
+                                <div className="mt-1 text-sm text-gray">
+                                    Showing{' '}
+                                    {currentPage * pagedResult.pageSize + 1}-
+                                    {Math.min(
+                                        (currentPage + 1) *
+                                            pagedResult.pageSize,
+                                        pagedResult.totalElements,
+                                    )}{' '}
+                                    of {pagedResult.totalElements} events
+                                </div>
+                            )}
+                        </div>
+
+                        <Dialog
+                            open={isFilterOpen}
+                            onOpenChange={setIsFilterOpen}
+                        >
+                            <DialogTrigger asChild>
+                                <button
+                                    onClick={handleOpenFilters}
+                                    className="inline-flex items-center gap-2 rounded-lg border-2 border-gray-light bg-white px-4 py-2 font-semibold text-black transition-all hover:border-primary hover:bg-primary/10 active:scale-95"
+                                >
+                                    <SlidersHorizontal className="size-5" />
+                                    Filters & Sort
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-md">
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        Search & Filter Events
+                                    </DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4 py-4">
+                                    {/* Search */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="search-title">
+                                            Search by Title
+                                        </Label>
+                                        <div className="relative">
+                                            <Input
+                                                id="search-title"
+                                                placeholder="Event name..."
+                                                value={tempSearchTitle}
+                                                onChange={(e) =>
+                                                    setTempSearchTitle(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="pr-10"
+                                            />
+                                            <Search className="absolute top-1/2 right-3 size-5 -translate-y-1/2 text-gray" />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="search-location">
+                                            Search by Location
+                                        </Label>
+                                        <Input
+                                            id="search-location"
+                                            placeholder="City or venue..."
+                                            value={tempSearchLocation}
+                                            onChange={(e) =>
+                                                setTempSearchLocation(
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </div>
+
+                                    {/* Sort */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="sort-by">Sort By</Label>
+                                        <select
+                                            id="sort-by"
+                                            value={tempSortAttribute}
+                                            onChange={(e) =>
+                                                setTempSortAttribute(
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="w-full rounded-lg border-2 border-gray-light px-3 py-2 text-black focus:border-primary focus:outline-none"
+                                        >
+                                            <option value="createdAt">
+                                                Created Date
+                                            </option>
+                                            <option value="startDate">
+                                                Event Date
+                                            </option>
+                                            <option value="title">Title</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="sort-direction">
+                                            Order
+                                        </Label>
+                                        <select
+                                            id="sort-direction"
+                                            value={tempSortDirection}
+                                            onChange={(e) =>
+                                                setTempSortDirection(
+                                                    e.target.value as
+                                                        | 'ASC'
+                                                        | 'DESC',
+                                                )
+                                            }
+                                            className="w-full rounded-lg border-2 border-gray-light px-3 py-2 text-black focus:border-primary focus:outline-none"
+                                        >
+                                            <option value="DESC">
+                                                Newest First
+                                            </option>
+                                            <option value="ASC">
+                                                Oldest First
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div className="flex gap-2 pt-4">
+                                        <Button
+                                            variant="outline"
+                                            onClick={handleResetFilters}
+                                            className="flex-1"
+                                        >
+                                            Reset
+                                        </Button>
+                                        <Button
+                                            onClick={handleApplyFilters}
+                                            className="flex-1 bg-primary text-black hover:bg-primary-darken"
+                                        >
+                                            Apply
+                                        </Button>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
 
-                {currentEvents.length > 0 ? (
+                {events.length > 0 ? (
                     <>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {currentEvents.map((event) => (
+                            {events.map((event) => (
                                 <EventCard
                                     key={event.id}
                                     id={event.id}
@@ -145,19 +368,19 @@ function RouteComponent() {
                         </div>
 
                         {/* Pagination */}
-                        {totalPages > 1 && (
+                        {pagedResult && pagedResult.totalPages > 1 && (
                             <div className="mt-12 flex items-center justify-center gap-2">
                                 <button
                                     onClick={() => goToPage(currentPage - 1)}
-                                    disabled={currentPage === 1}
+                                    disabled={currentPage === 0}
                                     className="flex size-10 items-center justify-center rounded-lg border-2 border-gray-light bg-white text-black transition-all hover:bg-gray-light disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <ChevronLeft className="size-5" />
                                 </button>
 
                                 {Array.from(
-                                    { length: totalPages },
-                                    (_, i) => i + 1,
+                                    { length: pagedResult.totalPages },
+                                    (_, i) => i,
                                 ).map((page) => (
                                     <button
                                         key={page}
@@ -168,13 +391,16 @@ function RouteComponent() {
                                                 : 'border-gray-light bg-white text-black hover:bg-gray-light'
                                         }`}
                                     >
-                                        {page}
+                                        {page + 1}
                                     </button>
                                 ))}
 
                                 <button
                                     onClick={() => goToPage(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
+                                    disabled={
+                                        currentPage ===
+                                        pagedResult.totalPages - 1
+                                    }
                                     className="flex size-10 items-center justify-center rounded-lg border-2 border-gray-light bg-white text-black transition-all hover:bg-gray-light disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <ChevronRight className="size-5" />
