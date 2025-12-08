@@ -3,8 +3,9 @@ import type { Event } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { EventCard } from './-components';
+import { ChatBotButton, ChatBotModal, EventCard } from './-components';
 
 export const Route = createFileRoute('/')({
     component: RouteComponent,
@@ -16,6 +17,12 @@ function RouteComponent() {
         staleTime: 5 * 60 * 1000,
     });
     const events = (response?.data as Event[]) ?? [];
+    const [isChatOpen, setIsChatOpen] = useState(true); // Auto-open on page load
+
+    // Auto-open chat when component mounts
+    useEffect(() => {
+        setIsChatOpen(true);
+    }, []);
 
     return (
         <div className="flex flex-col items-center px-10">
@@ -83,6 +90,12 @@ function RouteComponent() {
                     </div>
                 </section>
             </div>
+
+            {/* Chatbot Components */}
+            {!isChatOpen && (
+                <ChatBotButton onClick={() => setIsChatOpen(true)} />
+            )}
+            <ChatBotModal open={isChatOpen} onOpenChange={setIsChatOpen} />
         </div>
     );
 }
