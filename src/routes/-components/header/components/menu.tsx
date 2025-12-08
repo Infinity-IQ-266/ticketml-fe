@@ -16,7 +16,6 @@ import {
     Building2,
     Calendar,
     ChevronRight,
-    FileText,
     LogOut,
     Menu as MenuIcon,
     Ticket,
@@ -153,24 +152,6 @@ export const Menu = ({ open, onOpenChange }: MenuProps) => {
                                 >
                                     <Ticket className="size-5 shrink-0" />
                                     <span className="flex-1">My Tickets</span>
-                                    <ChevronRight className="size-5 opacity-50 transition-transform group-hover:translate-x-0.5" />
-                                </Link>
-
-                                <Link
-                                    to="/resources"
-                                    onClick={closeMenu}
-                                    className={cn(
-                                        'group flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-all duration-200 md:text-lg',
-                                        matchRoute({
-                                            to: '/resources',
-                                            fuzzy: true,
-                                        })
-                                            ? 'bg-primary/10 text-black shadow-sm'
-                                            : 'text-gray hover:bg-gray-light/50 hover:text-black',
-                                    )}
-                                >
-                                    <FileText className="size-5 shrink-0" />
-                                    <span className="flex-1">Resources</span>
                                     <ChevronRight className="size-5 opacity-50 transition-transform group-hover:translate-x-0.5" />
                                 </Link>
                             </nav>

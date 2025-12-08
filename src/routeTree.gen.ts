@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OrganizerRouteRouteImport } from './routes/organizer/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ResourcesIndexRouteImport } from './routes/resources/index'
 import { Route as PaymentResultIndexRouteImport } from './routes/payment-result/index'
 import { Route as OrganizerIndexRouteImport } from './routes/organizer/index'
 import { Route as MyTicketsIndexRouteImport } from './routes/my-tickets/index'
@@ -32,11 +31,6 @@ const OrganizerRouteRoute = OrganizerRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResourcesIndexRoute = ResourcesIndexRouteImport.update({
-  id: '/resources/',
-  path: '/resources/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentResultIndexRoute = PaymentResultIndexRouteImport.update({
@@ -105,7 +99,6 @@ export interface FileRoutesByFullPath {
   '/my-tickets': typeof MyTicketsIndexRoute
   '/organizer/': typeof OrganizerIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
-  '/resources': typeof ResourcesIndexRoute
   '/event/$eventId': typeof EventEventIdIndexRoute
   '/oauth2/redirect': typeof Oauth2RedirectIndexRoute
   '/organizer/$orgId': typeof OrganizerOrgIdIndexRoute
@@ -120,7 +113,6 @@ export interface FileRoutesByTo {
   '/my-tickets': typeof MyTicketsIndexRoute
   '/organizer': typeof OrganizerIndexRoute
   '/payment-result': typeof PaymentResultIndexRoute
-  '/resources': typeof ResourcesIndexRoute
   '/event/$eventId': typeof EventEventIdIndexRoute
   '/oauth2/redirect': typeof Oauth2RedirectIndexRoute
   '/organizer/$orgId': typeof OrganizerOrgIdIndexRoute
@@ -137,7 +129,6 @@ export interface FileRoutesById {
   '/my-tickets/': typeof MyTicketsIndexRoute
   '/organizer/': typeof OrganizerIndexRoute
   '/payment-result/': typeof PaymentResultIndexRoute
-  '/resources/': typeof ResourcesIndexRoute
   '/event/$eventId/': typeof EventEventIdIndexRoute
   '/oauth2/redirect/': typeof Oauth2RedirectIndexRoute
   '/organizer/$orgId/': typeof OrganizerOrgIdIndexRoute
@@ -155,7 +146,6 @@ export interface FileRouteTypes {
     | '/my-tickets'
     | '/organizer/'
     | '/payment-result'
-    | '/resources'
     | '/event/$eventId'
     | '/oauth2/redirect'
     | '/organizer/$orgId'
@@ -170,7 +160,6 @@ export interface FileRouteTypes {
     | '/my-tickets'
     | '/organizer'
     | '/payment-result'
-    | '/resources'
     | '/event/$eventId'
     | '/oauth2/redirect'
     | '/organizer/$orgId'
@@ -186,7 +175,6 @@ export interface FileRouteTypes {
     | '/my-tickets/'
     | '/organizer/'
     | '/payment-result/'
-    | '/resources/'
     | '/event/$eventId/'
     | '/oauth2/redirect/'
     | '/organizer/$orgId/'
@@ -202,7 +190,6 @@ export interface RootRouteChildren {
   OrganizerRouteRoute: typeof OrganizerRouteRouteWithChildren
   MyTicketsIndexRoute: typeof MyTicketsIndexRoute
   PaymentResultIndexRoute: typeof PaymentResultIndexRoute
-  ResourcesIndexRoute: typeof ResourcesIndexRoute
   EventEventIdIndexRoute: typeof EventEventIdIndexRoute
   Oauth2RedirectIndexRoute: typeof Oauth2RedirectIndexRoute
   EventEventIdPaymentIndexRoute: typeof EventEventIdPaymentIndexRoute
@@ -223,13 +210,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resources/': {
-      id: '/resources/'
-      path: '/resources'
-      fullPath: '/resources'
-      preLoaderRoute: typeof ResourcesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment-result/': {
@@ -338,7 +318,6 @@ const rootRouteChildren: RootRouteChildren = {
   OrganizerRouteRoute: OrganizerRouteRouteWithChildren,
   MyTicketsIndexRoute: MyTicketsIndexRoute,
   PaymentResultIndexRoute: PaymentResultIndexRoute,
-  ResourcesIndexRoute: ResourcesIndexRoute,
   EventEventIdIndexRoute: EventEventIdIndexRoute,
   Oauth2RedirectIndexRoute: Oauth2RedirectIndexRoute,
   EventEventIdPaymentIndexRoute: EventEventIdPaymentIndexRoute,

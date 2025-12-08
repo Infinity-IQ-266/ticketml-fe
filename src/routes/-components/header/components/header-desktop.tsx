@@ -48,18 +48,6 @@ export const HeaderDesktop = () => {
                     >
                         My Tickets
                     </Link>
-
-                    <Link
-                        to="/resources"
-                        className={cn(
-                            'relative text-xl font-medium text-nowrap transition-all duration-200 hover:text-primary-darken',
-                            matchRoute({ to: '/resources', fuzzy: true })
-                                ? 'font-bold text-black after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-[""]'
-                                : 'text-gray',
-                        )}
-                    >
-                        Resources
-                    </Link>
                 </div>
                 <div className="inline-flex items-center gap-8">
                     {meResponse ? <UserAvatar /> : <LoginButton />}
