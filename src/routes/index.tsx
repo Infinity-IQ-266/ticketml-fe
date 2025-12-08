@@ -67,7 +67,18 @@ function RouteComponent() {
                         <CarouselContent>
                             {featuredEvents.map((event) => (
                                 <CarouselItem key={event.id}>
-                                    <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+                                    <button
+                                        onClick={() =>
+                                            navigate({
+                                                to: '/event/$eventId',
+                                                params: {
+                                                    eventId:
+                                                        event.id.toString(),
+                                                },
+                                            })
+                                        }
+                                        className="group hover:shadow-3xl relative w-full overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 hover:scale-[1.02] focus:ring-4 focus:ring-primary/50 focus:outline-none"
+                                    >
                                         <div className="relative h-[400px] w-full md:h-[500px]">
                                             <img
                                                 src={
@@ -75,55 +86,12 @@ function RouteComponent() {
                                                     '/images/emxinhsayhi.png'
                                                 }
                                                 alt={event.title}
-                                                className="size-full object-cover"
+                                                className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-
-                                            {/* Event Info Overlay */}
-                                            <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-12">
-                                                <div className="mx-auto max-w-4xl space-y-4">
-                                                    <h2 className="line-clamp-2 text-3xl leading-tight font-bold md:text-5xl">
-                                                        {event.title}
-                                                    </h2>
-                                                    <p className="line-clamp-2 text-base opacity-90 md:text-xl">
-                                                        {event.description ||
-                                                            'Join us for an amazing experience!'}
-                                                    </p>
-                                                    <div className="flex flex-row flex-wrap gap-3 text-sm md:gap-6 md:text-lg">
-                                                        <span className="truncate rounded-full bg-white/20 px-4 py-2 backdrop-blur-sm">
-                                                            {event.location}
-                                                        </span>
-                                                        <span className="rounded-full bg-white/20 px-4 py-2 backdrop-blur-sm">
-                                                            {event.startDate
-                                                                ? new Date(
-                                                                      event.startDate,
-                                                                  ).toLocaleDateString()
-                                                                : 'TBA'}
-                                                        </span>
-                                                        <span className="rounded-full bg-primary px-4 py-2 font-bold text-black">
-                                                            From{' '}
-                                                            {event.ticketTypes[0]?.price.toLocaleString()}{' '}
-                                                            đ
-                                                        </span>
-                                                    </div>
-                                                    <button
-                                                        onClick={() =>
-                                                            navigate({
-                                                                to: '/event/$eventId',
-                                                                params: {
-                                                                    eventId:
-                                                                        event.id.toString(),
-                                                                },
-                                                            })
-                                                        }
-                                                        className="mt-4 rounded-full bg-primary px-8 py-3 font-bold text-black transition-all hover:scale-105 hover:bg-primary-darken hover:shadow-xl md:px-10 md:py-4 md:text-lg"
-                                                    >
-                                                        View Event Details
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            {/* Subtle hover overlay */}
+                                            <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/10" />
                                         </div>
-                                    </div>
+                                    </button>
                                 </CarouselItem>
                             ))}
                         </CarouselContent>

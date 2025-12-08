@@ -2,13 +2,14 @@ import { cn } from '@/lib/utils';
 import { checkInTicketMutation } from '@/services/client/@tanstack/react-query.gen';
 import { useMutation } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { BrowserQRCodeReader } from '@zxing/library';
+import { BrowserQRCodeReader } from '@zxing/browser';
 import {
     AlertCircle,
     ArrowLeft,
     Camera,
     CheckCircle2,
     RefreshCw,
+    RotateCw,
     SwitchCamera,
     XCircle,
 } from 'lucide-react';
@@ -73,36 +74,62 @@ function RouteComponent() {
 
                 const data = response.data as
                     | {
-                          ticketType?: string;
-                          holderName?: string;
-                          eventTitle?: string;
+                          status?: string;
+                          message?: string;
+                          ticketDetails?: {
+                              userName?: string;
+                              ticketType?: string;
+                              checkInTime?: string;
+                          } | null;
                       }
                     | undefined;
 
-                setScanResult({
-                    status: 'success',
-                    message: 'Check-in successful!',
-                    ticketInfo: {
-                        eventName: data?.eventTitle || 'Event',
-                        ticketType: data?.ticketType || 'N/A',
-                        holderName: data?.holderName || 'N/A',
-                    },
-                });
-                toast.success('Ticket checked in successfully!');
+                // Check the status from the response
+                const backendStatus = data?.status;
+                const backendMessage = data?.message || 'Unknown response';
+
+                if (backendStatus === 'SUCCESS') {
+                    setScanResult({
+                        status: 'success',
+                        message: backendMessage,
+                        ticketInfo: data?.ticketDetails
+                            ? {
+                                  eventName:
+                                      data.ticketDetails.userName || 'N/A',
+                                  ticketType:
+                                      data.ticketDetails.ticketType || 'N/A',
+                                  holderName:
+                                      data.ticketDetails.checkInTime || 'N/A',
+                              }
+                            : undefined,
+                    });
+                    toast.success(backendMessage);
+                } else if (backendStatus === 'ALREADY_CHECKED_IN') {
+                    setScanResult({
+                        status: 'already-used',
+                        message: backendMessage,
+                    });
+                    toast.error(backendMessage);
+                } else if (backendStatus === 'WRONG_EVENT') {
+                    setScanResult({
+                        status: 'error',
+                        message: backendMessage,
+                    });
+                    toast.error(backendMessage);
+                } else {
+                    setScanResult({
+                        status: 'error',
+                        message: backendMessage,
+                    });
+                    toast.error(backendMessage);
+                }
             } catch (error) {
                 const errorMessage =
                     error instanceof Error ? error.message : 'Check-in failed';
 
-                // Check if already used
-                const isAlreadyUsed = errorMessage
-                    .toLowerCase()
-                    .includes('already');
-
                 setScanResult({
-                    status: isAlreadyUsed ? 'already-used' : 'error',
-                    message: isAlreadyUsed
-                        ? 'This ticket has already been used'
-                        : errorMessage,
+                    status: 'error',
+                    message: errorMessage,
                 });
                 toast.error(errorMessage);
             } finally {
@@ -137,18 +164,18 @@ function RouteComponent() {
                     codeReaderRef.current = new BrowserQRCodeReader();
                 }
 
-                // Start continuous QR code scanning
-                codeReaderRef.current
-                    .decodeFromVideoElement(videoRef.current)
-                    .then((result) => {
+                // Start continuous QR code scanning with callback
+                codeReaderRef.current.decodeFromVideoElement(
+                    videoRef.current,
+                    (result, error) => {
                         if (result) {
                             handleCheckIn(result.getText());
                         }
-                    })
-                    .catch((err) => {
-                        // Ignore errors, will retry on next camera start
-                        console.error('QR scanning error:', err);
-                    });
+                        if (error && !(error.name === 'NotFoundException')) {
+                            console.error('QR scanning error:', error);
+                        }
+                    },
+                );
             }
         } catch (err) {
             console.error('Error accessing camera:', err);
@@ -157,17 +184,15 @@ function RouteComponent() {
     }, [facingMode, handleCheckIn]);
 
     const stopCamera = useCallback(() => {
-        // Stop QR code reader
-        if (codeReaderRef.current) {
-            codeReaderRef.current.reset();
-        }
-
         // Stop video stream
         if (videoRef.current && videoRef.current.srcObject) {
             const stream = videoRef.current.srcObject as MediaStream;
             stream.getTracks().forEach((track) => track.stop());
             videoRef.current.srcObject = null;
         }
+
+        // Reset QR code reader
+        codeReaderRef.current = null;
     }, []);
 
     useEffect(() => {
@@ -279,13 +304,30 @@ function RouteComponent() {
                                 </div>
 
                                 {/* Camera Controls */}
-                                <button
-                                    onClick={switchCamera}
-                                    className="absolute top-4 right-4 rounded-full bg-black/50 p-3 backdrop-blur-sm transition-all hover:bg-black/70"
-                                    aria-label="Switch Camera"
-                                >
-                                    <SwitchCamera className="size-6 text-white" />
-                                </button>
+                                <div className="absolute top-4 right-4 flex gap-2">
+                                    <button
+                                        onClick={() => {
+                                            stopCamera();
+                                            setTimeout(
+                                                () => startCamera(),
+                                                100,
+                                            );
+                                        }}
+                                        className="rounded-full bg-black/50 p-3 backdrop-blur-sm transition-all hover:bg-black/70 active:scale-95"
+                                        aria-label="Reload Camera"
+                                        title="Reload Camera"
+                                    >
+                                        <RotateCw className="size-6 text-white" />
+                                    </button>
+                                    <button
+                                        onClick={switchCamera}
+                                        className="rounded-full bg-black/50 p-3 backdrop-blur-sm transition-all hover:bg-black/70 active:scale-95"
+                                        aria-label="Switch Camera"
+                                        title="Switch Camera"
+                                    >
+                                        <SwitchCamera className="size-6 text-white" />
+                                    </button>
+                                </div>
                             </>
                         )}
                     </div>
@@ -314,34 +356,56 @@ function RouteComponent() {
                             {scanResult.message}
                         </p>
 
-                        {/* Ticket Information */}
-                        {scanResult.ticketInfo && (
-                            <div className="mt-4 w-full space-y-2 rounded-xl bg-white/50 p-4 text-left">
-                                <div className="flex justify-between">
-                                    <span className="font-medium text-gray">
-                                        Event:
-                                    </span>
-                                    <span className="font-bold text-black">
-                                        {scanResult.ticketInfo.eventName}
-                                    </span>
+                        {/* Ticket Information - Only show for SUCCESS */}
+                        {scanResult.status === 'success' &&
+                            scanResult.ticketInfo && (
+                                <div className="mt-4 w-full space-y-2 rounded-xl bg-white/50 p-4 text-left">
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-gray">
+                                            User Name:
+                                        </span>
+                                        <span className="font-bold text-black">
+                                            {scanResult.ticketInfo.eventName}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-gray">
+                                            Ticket Type:
+                                        </span>
+                                        <span className="font-bold text-black">
+                                            {scanResult.ticketInfo.ticketType}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-gray">
+                                            Check-in Time:
+                                        </span>
+                                        <span className="font-bold text-black">
+                                            {scanResult.ticketInfo.holderName}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="font-medium text-gray">
-                                        Type:
-                                    </span>
-                                    <span className="font-bold text-black">
-                                        {scanResult.ticketInfo.ticketType}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="font-medium text-gray">
-                                        Holder:
-                                    </span>
-                                    <span className="font-bold text-black">
-                                        {scanResult.ticketInfo.holderName}
-                                    </span>
-                                </div>
-                            </div>
+                            )}
+
+                        {/* Reset Button - Show when not idle or scanning */}
+                        {(scanResult.status === 'success' ||
+                            scanResult.status === 'error' ||
+                            scanResult.status === 'already-used') && (
+                            <button
+                                onClick={() => {
+                                    setScanResult({
+                                        status: 'idle',
+                                        message:
+                                            'Point camera at QR code to check in',
+                                    });
+                                    scanCooldownRef.current = false;
+                                    setLastScannedCode('');
+                                }}
+                                className="mt-4 flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-black transition-all hover:scale-105 hover:bg-primary-darken active:scale-95"
+                            >
+                                <RefreshCw className="size-5" />
+                                Scan Another Ticket
+                            </button>
                         )}
                     </div>
                 </div>
