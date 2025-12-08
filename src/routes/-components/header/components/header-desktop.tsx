@@ -19,7 +19,7 @@ export const HeaderDesktop = () => {
     const meResponse = rawMeData?.data as MeData;
 
     return (
-        <div className="inline-flex w-screen items-center border-b-2 border-black bg-white px-10 py-6 shadow-sm 2xl:px-20">
+        <div className="inline-flex w-screen items-center border-b border-gray-light bg-white px-10 py-6 shadow-sm 2xl:px-20">
             <Link
                 className="group inline-flex items-center transition-all duration-200 hover:cursor-pointer"
                 to="/"
@@ -29,7 +29,7 @@ export const HeaderDesktop = () => {
                     Ticket ML
                 </p>
             </Link>
-            <InputGroup className="ms-8 h-12 max-w-72 min-w-52 rounded-lg border-2 border-black shadow-sm transition-all duration-200 focus-within:border-primary focus-within:shadow-md 2xl:ms-16">
+            <InputGroup className="ms-8 h-12 max-w-72 min-w-52 rounded-lg border border-gray-light shadow-sm transition-all duration-200 focus-within:border-primary focus-within:shadow-md 2xl:ms-16">
                 <InputGroupInput
                     className="flex text-base text-black placeholder:text-base placeholder:font-normal placeholder:text-gray"
                     placeholder="Search events..."

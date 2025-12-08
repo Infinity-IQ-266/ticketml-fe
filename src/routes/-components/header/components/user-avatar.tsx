@@ -20,7 +20,11 @@ export const UserAvatar = () => {
 
     const { data: orgResponse } = useQuery({
         ...getMyOrganizationsOptions(),
-        staleTime: 60 * 60 * 1000,
+        staleTime: 60 * 60 * 1000, // 1 hour
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        enabled: !!meData, // Only fetch if user is logged in
     });
 
     const myOrganizations = orgResponse?.data as Organization[];
@@ -36,18 +40,18 @@ export const UserAvatar = () => {
     };
     return (
         <div
-            className="relative w-fit rounded-full border-2 border-black bg-white shadow-md"
+            className="relative w-fit rounded-full border border-gray-light bg-white shadow-sm"
             ref={ref}
         >
             <button
-                className="group inline-flex w-full items-center justify-center gap-1 rounded-full p-1 transition-all duration-200 hover:cursor-pointer hover:bg-primary/10"
+                className="group inline-flex w-full items-center justify-center gap-1 rounded-full p-1 transition-all duration-200 hover:bg-primary/10"
                 type="button"
                 title="User Avatar"
                 onClick={() => {
                     setIsShowingDropdown((prev) => !prev);
                 }}
             >
-                <div className="inline-flex size-14 shrink-0 items-center justify-center rounded-full border-2 border-black bg-gradient-to-br from-primary/20 to-secondary/20">
+                <div className="inline-flex size-14 shrink-0 items-center justify-center rounded-full border border-gray-light bg-primary/5">
                     <UserIcon className="aspect-[34/38] h-auto w-8" />
                 </div>
                 <div className="inline-flex items-center justify-center px-2">
@@ -64,7 +68,7 @@ export const UserAvatar = () => {
             </button>
             <div
                 className={cn(
-                    'absolute top-full left-0 mt-3 flex w-full transform flex-col items-center overflow-hidden rounded-2xl border-2 border-black bg-white text-xl font-medium text-nowrap shadow-xl transition-all duration-300',
+                    'absolute top-full left-0 mt-3 flex w-full transform flex-col items-center overflow-hidden rounded-xl border border-gray-light bg-white text-xl font-medium text-nowrap shadow-xl transition-all duration-300',
                     isShowingDropdown
                         ? 'animate-dropdown origin-top opacity-100 ease-out'
                         : 'animate-dropdown-reverse pointer-events-none origin-bottom opacity-0 ease-in',

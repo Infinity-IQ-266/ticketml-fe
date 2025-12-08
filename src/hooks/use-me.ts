@@ -4,6 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 export const useMe = () => {
     return useQuery({
         ...getCurrentUserOptions(),
-        staleTime: 60 * 60 * 1000,
+        staleTime: 60 * 60 * 1000, // 1 hour
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
     });
 };

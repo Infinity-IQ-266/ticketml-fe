@@ -1,10 +1,11 @@
-import { UserIcon } from '@/assets/icons';
+import { GoogleIcon, UserIcon } from '@/assets/icons';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { BACKEND_URL } from '@/envs';
 import { useMe } from '@/hooks';
 import { cn } from '@/lib/utils';
 import { getMyOrganizationsOptions } from '@/services/client/@tanstack/react-query.gen';
@@ -22,8 +23,6 @@ import {
     X,
 } from 'lucide-react';
 
-import { LoginButton } from '.';
-
 interface MenuProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -39,7 +38,11 @@ export const Menu = ({ open, onOpenChange }: MenuProps) => {
 
     const { data: orgResponse } = useQuery({
         ...getMyOrganizationsOptions(),
-        staleTime: 60 * 60 * 1000,
+        staleTime: 60 * 60 * 1000, // 1 hour
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        enabled: !!meData, // Only fetch if user is logged in
     });
 
     const myOrganizations = orgResponse?.data as Organization[];
@@ -98,9 +101,17 @@ export const Menu = ({ open, onOpenChange }: MenuProps) => {
                                 </div>
                             </div>
                         ) : (
-                            <div onClick={closeMenu}>
-                                <LoginButton />
-                            </div>
+                            <button
+                                onClick={() => {
+                                    window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
+                                }}
+                                className="group flex w-full items-center justify-center gap-2 rounded-lg border border-gray-light bg-white px-4 py-3 text-base font-semibold shadow-sm transition-all duration-200 hover:border-primary/50 hover:bg-primary/5 hover:shadow-md active:scale-95 md:text-lg"
+                            >
+                                <GoogleIcon className="size-5 transition-transform duration-200 group-hover:scale-110 md:size-6" />
+                                <span className="text-black">
+                                    Login with Google
+                                </span>
+                            </button>
                         )}
                     </div>
 
