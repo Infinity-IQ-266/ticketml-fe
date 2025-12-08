@@ -1,5 +1,5 @@
 export type Organization = {
-    id: string;
+    organizationId: string;
     name: string;
     description?: string;
     address?: string;

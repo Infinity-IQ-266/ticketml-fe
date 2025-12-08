@@ -73,20 +73,24 @@ export const UserAvatar = () => {
                 {myOrganizations &&
                     myOrganizations.length > 0 &&
                     myOrganizations.map((org) => (
-                        <>
+                        <div key={org.organizationId} className="w-full">
                             <button
                                 className="z-10 inline-flex w-full items-center justify-center px-4 py-3 text-xl font-medium text-nowrap transition-all duration-200 hover:cursor-pointer hover:bg-primary/10"
                                 type="button"
-                                onClick={() =>
-                                    console.log('Switch to Organizer account')
-                                }
+                                onClick={() => {
+                                    setIsShowingDropdown(false);
+                                    navigate({
+                                        to: '/organizer/$orgId',
+                                        params: { orgId: org.organizationId },
+                                    });
+                                }}
                             >
                                 <p className="truncate text-xl font-bold text-gray">
                                     {org?.name}
                                 </p>
                             </button>
                             <hr className="w-full border-t border-gray-light" />
-                        </>
+                        </div>
                     ))}
 
                 <hr className="w-full border-t border-gray-light" />
