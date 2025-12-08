@@ -14,7 +14,7 @@ import {
     updateEventMutation,
 } from '@/services/client/@tanstack/react-query.gen';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Plus, Trash2, X } from 'lucide-react';
+import { Calendar, Image, MapPin, Plus, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -32,6 +32,7 @@ interface EventFormData {
     startDate: string;
     endDate: string;
     location: string;
+    bannerImage: File | null;
     ticketTypes: TicketTypeForm[];
 }
 
@@ -71,6 +72,7 @@ export const CreateEventModal = ({
         startDate: eventToEdit?.startDate ?? '',
         endDate: eventToEdit?.endDate ?? '',
         location: eventToEdit?.location ?? '',
+        bannerImage: null,
         ticketTypes: isEditMode
             ? []
             : [{ ...initialTicketType, id: crypto.randomUUID() }],
@@ -168,6 +170,7 @@ export const CreateEventModal = ({
             startDate: '',
             endDate: '',
             location: '',
+            bannerImage: null,
             ticketTypes: [{ ...initialTicketType, id: crypto.randomUUID() }],
         });
         setErrors({});
@@ -243,26 +246,55 @@ export const CreateEventModal = ({
                         startDate: formData.startDate,
                         endDate: formData.endDate,
                         location: formData.location,
+                        ...(formData.bannerImage && {
+                            bannerImage: formData.bannerImage,
+                        }),
                     },
                 });
                 await handleUpdateSuccess();
             } else {
                 // Create event with ticket types
+                // Build the body with flattened ticketTypes for multipart/form-data
+                type FlattenedEventRequest = Record<
+                    string,
+                    string | number | File
+                > & {
+                    title: string;
+                    description: string;
+                    startDate: string;
+                    endDate: string;
+                    location: string;
+                    bannerImage?: File;
+                };
+
+                const requestBody: FlattenedEventRequest = {
+                    title: formData.title,
+                    description: formData.description,
+                    startDate: formData.startDate,
+                    endDate: formData.endDate,
+                    location: formData.location,
+                };
+
+                // Add banner image if provided
+                if (formData.bannerImage) {
+                    requestBody.bannerImage = formData.bannerImage;
+                }
+
+                // Flatten ticketTypes array into individual fields
+                formData.ticketTypes.forEach((tt, index) => {
+                    requestBody[`ticketTypes[${index}].type`] = tt.type;
+                    requestBody[`ticketTypes[${index}].price`] = tt.price;
+                    requestBody[`ticketTypes[${index}].totalQuantity`] =
+                        tt.totalQuantity;
+                    requestBody[`ticketTypes[${index}].ticketTypeStatus`] =
+                        tt.ticketTypeStatus;
+                });
+
                 await createEvent.mutateAsync({
                     path: { orgId: Number(orgId) },
-                    body: {
-                        title: formData.title,
-                        description: formData.description,
-                        startDate: formData.startDate,
-                        endDate: formData.endDate,
-                        location: formData.location,
-                        ticketTypes: formData.ticketTypes.map((tt) => ({
-                            type: tt.type,
-                            price: tt.price,
-                            totalQuantity: tt.totalQuantity,
-                            ticketTypeStatus: tt.ticketTypeStatus,
-                        })),
-                    },
+                    body: requestBody as unknown as Parameters<
+                        typeof createEvent.mutateAsync
+                    >[0]['body'],
                 });
                 await handleCreateSuccess();
             }
@@ -373,6 +405,63 @@ export const CreateEventModal = ({
                             }
                             rows={4}
                         />
+                    </div>
+
+                    {/* Banner Image */}
+                    <div className="space-y-2">
+                        <Label
+                            htmlFor="bannerImage"
+                            className="flex items-center gap-2 text-base font-semibold"
+                        >
+                            <Image className="size-5" />
+                            Event Banner Image
+                        </Label>
+                        <div className="space-y-2">
+                            <Input
+                                id="bannerImage"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setFormData({
+                                            ...formData,
+                                            bannerImage: file,
+                                        });
+                                    }
+                                }}
+                                className={
+                                    errors.bannerImage ? 'border-red' : ''
+                                }
+                            />
+                            {formData.bannerImage && (
+                                <div className="flex items-center gap-2 rounded-lg border border-gray-light bg-gray-light/20 p-2">
+                                    <Image className="size-4 text-gray" />
+                                    <span className="flex-1 truncate text-sm text-gray">
+                                        {formData.bannerImage.name}
+                                    </span>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() =>
+                                            setFormData({
+                                                ...formData,
+                                                bannerImage: null,
+                                            })
+                                        }
+                                        className="size-6 p-0"
+                                    >
+                                        <X className="size-4" />
+                                    </Button>
+                                </div>
+                            )}
+                            {errors.bannerImage && (
+                                <p className="text-sm text-red">
+                                    {errors.bannerImage}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     {/* Date Range */}
