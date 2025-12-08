@@ -58,7 +58,7 @@ export const HeaderDesktop = () => {
                                 : 'text-gray',
                         )}
                     >
-                        Host events
+                        Host your events
                     </Link>
                 </div>
                 <div className="inline-flex items-center gap-8">

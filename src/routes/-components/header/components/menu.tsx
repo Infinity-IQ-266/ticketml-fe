@@ -169,7 +169,9 @@ export const Menu = ({ open, onOpenChange }: MenuProps) => {
                                     )}
                                 >
                                     <Building2 className="size-5 shrink-0" />
-                                    <span className="flex-1">Host events</span>
+                                    <span className="flex-1">
+                                        Host your events
+                                    </span>
                                     <ChevronRight className="size-5 opacity-50 transition-transform group-hover:translate-x-0.5" />
                                 </Link>
                             </nav>
