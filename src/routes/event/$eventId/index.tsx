@@ -75,7 +75,7 @@ function RouteComponent() {
                     </div>
                 </div>
                 <img
-                    src="/images/ntpmm.png"
+                    src={event?.imageUrl ?? '/images/ntpmm.png'}
                     className="ms-8 w-2/3 rounded-r-xl border border-r-0 border-black"
                 />
             </div>

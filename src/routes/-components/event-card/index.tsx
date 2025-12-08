@@ -5,7 +5,7 @@ import { Calendar, Clock, MapPin } from 'lucide-react';
 
 interface EventCardProps {
     id: number;
-    image: string;
+    image?: string;
     title: string;
     date: string;
     time: string;

@@ -55,7 +55,9 @@ function RouteComponent() {
                         {events.map((event) => (
                             <EventCard
                                 id={event.id}
-                                image="/images/emxinhsayhi.png"
+                                image={
+                                    event.imageUrl ?? '/images/emxinhsayhi.png'
+                                }
                                 title={event.title}
                                 date={event.startDate?.toLocaleString() ?? ''}
                                 location={event.location}
@@ -76,7 +78,9 @@ function RouteComponent() {
                         {events.map((event) => (
                             <EventCard
                                 id={event.id}
-                                image="/images/emxinhsayhi.png"
+                                image={
+                                    event.imageUrl ?? '/images/emxinhsayhi.png'
+                                }
                                 title={event.title}
                                 date={event.startDate?.toLocaleString() ?? ''}
                                 location={event.location}

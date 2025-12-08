@@ -4,6 +4,7 @@ export type Event = {
     id: number;
     title: string;
     description?: string;
+    imageUrl?: string;
     startDate: Date | null;
     endDate: Date | null;
     location: string;
