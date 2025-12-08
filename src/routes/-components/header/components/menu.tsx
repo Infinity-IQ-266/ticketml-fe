@@ -19,6 +19,7 @@ import {
     LogOut,
     Menu as MenuIcon,
     Ticket,
+    X,
 } from 'lucide-react';
 
 import { LoginButton } from '.';
@@ -61,13 +62,22 @@ export const Menu = ({ open, onOpenChange }: MenuProps) => {
                 <div className="flex h-full max-h-[90vh] flex-col">
                     {/* Header */}
                     <DialogHeader className="border-b border-gray-light bg-white p-5 md:p-6">
-                        <DialogTitle className="flex items-center gap-3">
-                            <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 md:size-12">
-                                <MenuIcon className="size-5 text-primary md:size-6" />
+                        <DialogTitle className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 md:size-12">
+                                    <MenuIcon className="size-5 text-primary md:size-6" />
+                                </div>
+                                <span className="text-2xl font-bold text-black md:text-3xl">
+                                    Menu
+                                </span>
                             </div>
-                            <span className="text-2xl font-bold text-black md:text-3xl">
-                                Menu
-                            </span>
+                            <button
+                                onClick={() => onOpenChange(false)}
+                                className="rounded-lg p-2 transition-all duration-200 hover:bg-gray-light/50 active:scale-95"
+                                aria-label="Close menu"
+                            >
+                                <X className="size-5 text-gray md:size-6" />
+                            </button>
                         </DialogTitle>
                     </DialogHeader>
 
