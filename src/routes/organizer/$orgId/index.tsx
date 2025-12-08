@@ -1,10 +1,14 @@
+import { useMe } from '@/hooks/use-me';
 import { cn } from '@/lib/utils';
 import {
+    addMemberMutation,
     getDashboardOptions,
     getEventsByOrganizationOptions,
+    getMembersOptions,
     getMyOrganizationsOptions,
+    removeMemberMutation,
 } from '@/services/client/@tanstack/react-query.gen';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
     Building2,
@@ -17,9 +21,13 @@ import {
     QrCode,
     Settings,
     Ticket,
+    Trash2,
     TrendingUp,
+    UserPlus,
+    Users,
 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { CreateEventModal } from './-components';
 
@@ -27,7 +35,7 @@ export const Route = createFileRoute('/organizer/$orgId/')({
     component: RouteComponent,
 });
 
-type TabType = 'events' | 'settings';
+type TabType = 'events' | 'members' | 'settings';
 
 // Types based on actual API response
 interface Organization {
@@ -38,6 +46,14 @@ interface Organization {
     email: string | null;
     phoneNumber: string | null;
     address: string;
+}
+
+interface Member {
+    userId: number;
+    email: string;
+    fullName: string;
+    role: 'OWNER' | 'MANAGER' | 'STAFF';
+    status: string | null;
 }
 
 interface TicketType {
@@ -72,7 +88,19 @@ function RouteComponent() {
     const { orgId } = Route.useParams();
     const [activeTab, setActiveTab] = useState<TabType>('events');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+    const [newMemberEmail, setNewMemberEmail] = useState('');
+    const [newMemberRole, setNewMemberRole] = useState<
+        'OWNER' | 'MANAGER' | 'STAFF'
+    >('STAFF');
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    // Get current user info
+    const { data: meResponse } = useMe();
+    const currentUser = meResponse?.data as
+        | { userId: number; email: string }
+        | undefined;
 
     // Fetch organization details from my organizations list
     const { data: orgsResponse } = useQuery({
@@ -91,6 +119,14 @@ function RouteComponent() {
     // Fetch events for this organization
     const { data: eventsResponse, isLoading: isLoadingEvents } = useQuery({
         ...getEventsByOrganizationOptions({
+            path: { orgId: Number(orgId) },
+        }),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    // Fetch members for this organization
+    const { data: membersResponse, isLoading: isLoadingMembers } = useQuery({
+        ...getMembersOptions({
             path: { orgId: Number(orgId) },
         }),
         staleTime: 5 * 60 * 1000,
@@ -124,6 +160,45 @@ function RouteComponent() {
 
     // Extract dashboard stats
     const dashboardData = dashboardResponse?.data as DashboardData | undefined;
+
+    // Extract members and check current user's role
+    const members = (membersResponse?.data as Member[]) ?? [];
+    const currentUserMember = members.find(
+        (member) => member.email === currentUser?.email,
+    );
+    const canManageMembers =
+        currentUserMember?.role === 'OWNER' ||
+        currentUserMember?.role === 'MANAGER';
+
+    // Mutations for member management
+    const addMember = useMutation({
+        ...addMemberMutation(),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['getMembers', { path: { orgId: Number(orgId) } }],
+            });
+            toast.success('Member added successfully');
+            setIsAddMemberModalOpen(false);
+            setNewMemberEmail('');
+            setNewMemberRole('STAFF');
+        },
+        onError: (error) => {
+            toast.error(error.message || 'Failed to add member');
+        },
+    });
+
+    const removeMember = useMutation({
+        ...removeMemberMutation(),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['getMembers', { path: { orgId: Number(orgId) } }],
+            });
+            toast.success('Member removed successfully');
+        },
+        onError: (error) => {
+            toast.error(error.message || 'Failed to remove member');
+        },
+    });
 
     // Extract events from API response and calculate stats
     const apiEvents = (eventsResponse?.data as EventData[]) ?? [];
@@ -320,6 +395,20 @@ function RouteComponent() {
                     <Calendar className="size-5" />
                     <span>Events ({events.length})</span>
                 </button>
+                {canManageMembers && (
+                    <button
+                        onClick={() => setActiveTab('members')}
+                        className={cn(
+                            'flex flex-1 items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-all duration-200',
+                            activeTab === 'members'
+                                ? 'bg-secondary/20 text-black shadow-md'
+                                : 'text-gray hover:bg-gray-light/30 hover:text-black',
+                        )}
+                    >
+                        <Users className="size-5" />
+                        <span>Members ({members.length})</span>
+                    </button>
+                )}
                 <button
                     onClick={() => setActiveTab('settings')}
                     className={cn(
@@ -442,6 +531,202 @@ function RouteComponent() {
                                 </div>
                             </div>
                         ))
+                    )}
+                </div>
+            )}
+
+            {activeTab === 'members' && canManageMembers && (
+                <div className="space-y-4">
+                    {/* Add Member Button */}
+                    <button
+                        onClick={() => setIsAddMemberModalOpen(true)}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-secondary bg-secondary/5 p-6 font-semibold text-black transition-all hover:bg-secondary/10 hover:shadow-md"
+                    >
+                        <UserPlus className="size-6" />
+                        <span className="text-lg">Add New Member</span>
+                    </button>
+
+                    {/* Members List */}
+                    {isLoadingMembers ? (
+                        <div className="flex flex-col items-center justify-center rounded-xl border border-gray-light bg-gray-light/10 py-20">
+                            <div className="mb-4 inline-block size-12 animate-spin rounded-full border-4 border-gray-light border-t-secondary"></div>
+                            <p className="text-lg font-semibold text-gray">
+                                Loading members...
+                            </p>
+                        </div>
+                    ) : members.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-light bg-gray-light/10 py-20">
+                            <Users className="mb-4 size-16 text-gray-light" />
+                            <p className="text-xl font-semibold text-gray">
+                                No members yet
+                            </p>
+                            <p className="mt-2 text-sm text-gray">
+                                Add your first member to get started
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4">
+                            {members.map((member) => (
+                                <div
+                                    key={member.userId}
+                                    className="group flex items-center justify-between rounded-xl border border-gray-light bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md md:p-6"
+                                >
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex size-12 items-center justify-center rounded-full bg-secondary/20">
+                                                <Users className="size-6 text-secondary-darken" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-bold text-black">
+                                                    {member.fullName}
+                                                </h3>
+                                                <p className="text-sm text-gray">
+                                                    {member.email}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex flex-col items-end">
+                                            <span
+                                                className={cn(
+                                                    'rounded-full px-4 py-1 text-sm font-semibold',
+                                                    member.role === 'OWNER'
+                                                        ? 'bg-primary/20 text-primary-darken'
+                                                        : member.role ===
+                                                            'MANAGER'
+                                                          ? 'bg-secondary/20 text-secondary-darken'
+                                                          : 'bg-gray-light/50 text-gray',
+                                                )}
+                                            >
+                                                {member.role}
+                                            </span>
+                                            {member.status && (
+                                                <span className="mt-1 text-xs text-gray">
+                                                    Status: {member.status}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {member.userId !==
+                                            currentUser?.userId && (
+                                            <button
+                                                onClick={() => {
+                                                    if (
+                                                        window.confirm(
+                                                            `Are you sure you want to remove ${member.fullName}?`,
+                                                        )
+                                                    ) {
+                                                        removeMember.mutate({
+                                                            path: {
+                                                                orgId: Number(
+                                                                    orgId,
+                                                                ),
+                                                                userId: member.userId,
+                                                            },
+                                                        });
+                                                    }
+                                                }}
+                                                className="rounded-lg bg-red/10 p-3 text-red transition-all hover:bg-red hover:text-white hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+                                                disabled={
+                                                    removeMember.isPending
+                                                }
+                                            >
+                                                <Trash2 className="size-5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Add Member Modal */}
+                    {isAddMemberModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                            <div className="w-full max-w-md rounded-xl border border-gray-light bg-white p-6 shadow-xl">
+                                <h2 className="mb-6 text-2xl font-bold text-black">
+                                    Add New Member
+                                </h2>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="mb-2 block text-sm font-semibold text-black">
+                                            Email Address
+                                        </label>
+                                        <input
+                                            type="email"
+                                            value={newMemberEmail}
+                                            onChange={(e) =>
+                                                setNewMemberEmail(
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="member@example.com"
+                                            className="w-full rounded-lg border-2 border-gray-light px-4 py-3 text-black transition-colors focus:border-secondary focus:outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="mb-2 block text-sm font-semibold text-black">
+                                            Role
+                                        </label>
+                                        <select
+                                            value={newMemberRole}
+                                            onChange={(e) =>
+                                                setNewMemberRole(
+                                                    e.target.value as
+                                                        | 'OWNER'
+                                                        | 'MANAGER'
+                                                        | 'STAFF',
+                                                )
+                                            }
+                                            className="w-full rounded-lg border-2 border-gray-light px-4 py-3 text-black transition-colors focus:border-secondary focus:outline-none"
+                                        >
+                                            <option value="STAFF">Staff</option>
+                                            <option value="MANAGER">
+                                                Manager
+                                            </option>
+                                            <option value="OWNER">Owner</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => {
+                                                setIsAddMemberModalOpen(false);
+                                                setNewMemberEmail('');
+                                                setNewMemberRole('STAFF');
+                                            }}
+                                            className="flex-1 rounded-lg border-2 border-gray-light px-6 py-3 font-semibold text-black transition-all hover:bg-gray-light/30"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                if (!newMemberEmail.trim()) {
+                                                    toast.error(
+                                                        'Please enter an email address',
+                                                    );
+                                                    return;
+                                                }
+                                                addMember.mutate({
+                                                    path: {
+                                                        orgId: Number(orgId),
+                                                    },
+                                                    body: {
+                                                        email: newMemberEmail,
+                                                        role: newMemberRole,
+                                                    },
+                                                });
+                                            }}
+                                            disabled={addMember.isPending}
+                                            className="flex-1 rounded-lg bg-secondary px-6 py-3 font-semibold text-white transition-all hover:bg-secondary-darken hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            {addMember.isPending
+                                                ? 'Adding...'
+                                                : 'Add Member'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
             )}
