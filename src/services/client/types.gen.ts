@@ -49,6 +49,7 @@ export type EventCreateRequestDto = {
     startDate: string;
     endDate: string;
     location: string;
+    bannerImage?: Blob | File;
     ticketTypes: Array<TicketTypeRequestDto>;
 };
 
@@ -85,6 +86,7 @@ export type EventUpdateRequestDto = {
     location?: string;
     startDate?: string;
     endDate?: string;
+    bannerImage?: Blob | File;
 };
 
 export type OrgStatusUpdateDto = {
@@ -252,7 +254,7 @@ export type GetEventsByOrganizationResponse =
     GetEventsByOrganizationResponses[keyof GetEventsByOrganizationResponses];
 
 export type CreateEventData = {
-    body: EventCreateRequestDto;
+    body?: EventCreateRequestDto;
     path: {
         orgId: number;
     };
@@ -362,7 +364,7 @@ export type UpdateTicketTypeResponse =
     UpdateTicketTypeResponses[keyof UpdateTicketTypeResponses];
 
 export type UpdateEventData = {
-    body: EventUpdateRequestDto;
+    body?: EventUpdateRequestDto;
     path: {
         eventId: number;
     };

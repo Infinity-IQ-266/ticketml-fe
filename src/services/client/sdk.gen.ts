@@ -226,10 +226,11 @@ export const createEvent = <ThrowOnError extends boolean = false>(
         unknown,
         ThrowOnError
     >({
+        ...formDataBodySerializer,
         url: '/api/v1/organizer/organizations/{orgId}/events',
         ...options,
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': null,
             ...options.headers,
         },
     });
@@ -328,10 +329,11 @@ export const updateEvent = <ThrowOnError extends boolean = false>(
         unknown,
         ThrowOnError
     >({
+        ...formDataBodySerializer,
         url: '/api/v1/organizer/events/{eventId}',
         ...options,
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': null,
             ...options.headers,
         },
     });
