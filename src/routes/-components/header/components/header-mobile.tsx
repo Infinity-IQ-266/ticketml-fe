@@ -10,7 +10,7 @@ export const HeaderMobile = () => {
 
     return (
         <>
-            <div className="relative z-40 inline-flex w-screen items-center border-b border-gray-light bg-white px-5 py-4 shadow-sm md:px-10 md:py-6">
+            <div className="relative z-40 inline-flex w-full items-center border-b border-gray-light bg-white px-5 py-4 shadow-sm md:px-10 md:py-6">
                 <Link
                     to="/"
                     className="inline-flex items-center transition-transform duration-200 hover:scale-105"

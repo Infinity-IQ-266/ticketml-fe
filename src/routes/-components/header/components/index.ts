@@ -1,4 +1,3 @@
-export * from './cart';
 export * from './header-desktop';
 export * from './header-mobile';
 export * from './login-button';

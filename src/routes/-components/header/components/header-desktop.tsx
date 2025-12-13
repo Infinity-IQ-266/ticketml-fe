@@ -12,7 +12,7 @@ export const HeaderDesktop = () => {
     const meResponse = rawMeData?.data as MeData;
 
     return (
-        <div className="relative z-40 inline-flex w-screen items-center border-b border-gray-light bg-white px-10 py-6 shadow-sm 2xl:px-20">
+        <div className="relative z-40 inline-flex w-full items-center border-b border-gray-light bg-white px-10 py-6 shadow-sm 2xl:px-20">
             <Link
                 className="group inline-flex items-center transition-all duration-200 hover:cursor-pointer"
                 to="/"
