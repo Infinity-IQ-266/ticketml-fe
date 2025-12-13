@@ -21,7 +21,6 @@ function RouteComponent() {
 
     const { data: response, isLoading } = useQuery({
         ...getTicketsOptions(),
-        staleTime: 5 * 60 * 1000,
     });
 
     const handleViewQR = (ticket: Ticket) => {

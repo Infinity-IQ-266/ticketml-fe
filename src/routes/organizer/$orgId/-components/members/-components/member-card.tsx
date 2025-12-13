@@ -21,22 +21,24 @@ export const MemberCard = ({
     onRemove,
 }: MemberCardProps) => {
     return (
-        <div className="group flex items-center justify-between rounded-xl border border-gray-light bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md md:p-6">
-            <div className="flex-1">
+        <div className="group flex flex-col gap-4 rounded-xl border border-gray-light bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md md:flex-row md:items-center md:justify-between md:p-6">
+            <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-3">
-                    <div className="flex size-12 items-center justify-center rounded-full bg-secondary/20">
+                    <div className="flex size-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary/20">
                         <Users className="size-6 text-secondary-darken" />
                     </div>
-                    <div>
-                        <h3 className="text-lg font-bold text-black">
+                    <div className="min-w-0 flex-1">
+                        <h3 className="truncate text-lg font-bold text-black">
                             {member.fullName}
                         </h3>
-                        <p className="text-sm text-gray">{member.email}</p>
+                        <p className="truncate text-sm text-gray">
+                            {member.email}
+                        </p>
                     </div>
                 </div>
             </div>
-            <div className="flex items-center gap-4">
-                <div className="flex flex-col items-end">
+            <div className="flex items-center justify-between gap-4 md:justify-end">
+                <div className="flex flex-col items-start md:items-end">
                     <span
                         className={cn(
                             'rounded-full px-4 py-1 text-sm font-semibold',
@@ -58,7 +60,7 @@ export const MemberCard = ({
                 {member.userId !== currentUserId && (
                     <button
                         onClick={() => onRemove(member)}
-                        className="rounded-lg bg-red/10 p-3 text-red transition-all hover:bg-red hover:text-white hover:shadow-md"
+                        className="flex-shrink-0 rounded-lg bg-red/10 p-3 text-red transition-all hover:bg-red hover:text-white hover:shadow-md"
                     >
                         <Trash2 className="size-5" />
                     </button>

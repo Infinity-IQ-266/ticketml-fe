@@ -234,40 +234,46 @@ function RouteComponent() {
                 <button
                     onClick={() => setActiveTab('events')}
                     className={cn(
-                        'flex flex-1 items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-all duration-200',
+                        'flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-3 font-semibold transition-all duration-200 md:px-6',
                         activeTab === 'events'
                             ? 'bg-primary text-black shadow-md'
                             : 'text-gray hover:bg-gray-light/30 hover:text-black',
                     )}
                 >
                     <Calendar className="size-5" />
-                    <span>Events ({events.length})</span>
+                    <span className="hidden sm:inline">
+                        Events ({events.length})
+                    </span>
+                    <span className="sm:hidden">{events.length}</span>
                 </button>
                 {canManageMembers && (
                     <button
                         onClick={() => setActiveTab('members')}
                         className={cn(
-                            'flex flex-1 items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-all duration-200',
+                            'flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-3 font-semibold transition-all duration-200 md:px-6',
                             activeTab === 'members'
                                 ? 'bg-secondary/20 text-black shadow-md'
                                 : 'text-gray hover:bg-gray-light/30 hover:text-black',
                         )}
                     >
                         <Users className="size-5" />
-                        <span>Members ({members.length})</span>
+                        <span className="hidden sm:inline">
+                            Members ({members.length})
+                        </span>
+                        <span className="sm:hidden">{members.length}</span>
                     </button>
                 )}
                 <button
                     onClick={() => setActiveTab('settings')}
                     className={cn(
-                        'flex flex-1 items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-all duration-200',
+                        'flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-3 font-semibold transition-all duration-200 md:px-6',
                         activeTab === 'settings'
                             ? 'bg-gray/20 text-black shadow-md'
                             : 'text-gray hover:bg-gray-light/30 hover:text-black',
                     )}
                 >
                     <Settings className="size-5" />
-                    <span>Settings</span>
+                    <span className="hidden sm:inline">Settings</span>
                 </button>
             </div>
 
@@ -323,7 +329,10 @@ function RouteComponent() {
             )}
 
             {activeTab === 'settings' && (
-                <OrganizationSettings organization={organization} />
+                <OrganizationSettings
+                    organization={organization}
+                    orgId={orgId}
+                />
             )}
 
             {/* Create Event Modal */}

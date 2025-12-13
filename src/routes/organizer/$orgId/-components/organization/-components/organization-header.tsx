@@ -17,18 +17,18 @@ export const OrganizationHeader = ({
                 <img
                     src={organization.logoUrl}
                     alt={organization.name}
-                    className="size-16 rounded-xl border-2 border-black object-cover md:size-20"
+                    className="size-16 flex-shrink-0 rounded-xl border-2 border-black object-cover md:size-20"
                 />
             ) : (
-                <div className="flex size-16 items-center justify-center rounded-xl border-2 border-black bg-primary/20 md:size-20">
+                <div className="flex size-16 flex-shrink-0 items-center justify-center rounded-xl border-2 border-black bg-primary/20 md:size-20">
                     <Building2 className="size-8 text-primary-darken md:size-10" />
                 </div>
             )}
-            <div>
-                <h1 className="text-2xl font-bold text-black md:text-4xl">
+            <div className="min-w-0 flex-1">
+                <h1 className="text-2xl font-bold break-words text-black md:text-4xl">
                     {organization.name}
                 </h1>
-                <p className="mt-1 text-sm text-gray md:text-base">
+                <p className="mt-1 text-sm break-words text-gray md:text-base">
                     {organization.description}
                 </p>
             </div>
